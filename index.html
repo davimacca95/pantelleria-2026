@@ -98,6 +98,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f5f5f5;c
 <button class="map-btn" onclick="filterDay(2)">2</button>
 <button class="map-btn" onclick="filterDay(3)">3</button>
 <button class="map-btn" onclick="filterDay(4)">4</button>
+<button class="map-btn" id="gps-btn" onclick="toggleGPS()" style="margin-left:auto;background:#4285f4;color:#fff;border-color:#4285f4">📍 Dove sono</button>
 </div>
 <div class="filter-row">
 <span class="filter-label">Tipo:</span>
@@ -752,6 +753,12 @@ function createMarker(p){
     }
     popup += '<div style="margin-top:8px;font-size:12px;">';
     popup += '<a href="https://www.google.com/maps/search/'+encodeURIComponent(p.name+' Pantelleria')+'" target="_blank" style="color:#1565c0;text-decoration:none;">📍 Google Maps</a>';
+    if(userLat){
+      var d=Math.round(Math.sqrt(Math.pow((p.lat-userLat)*111000,2)+Math.pow((p.lng-userLng)*111000*Math.cos(userLat*Math.PI/180),2)));
+      var distStr=d>1000?(d/1000).toFixed(1)+' km':d+' m';
+      popup+=' &nbsp;·&nbsp; <span style="color:#666;">📏 '+distStr+'</span>';
+      popup+='<br><a href="https://www.google.com/maps/dir/'+userLat+','+userLng+'/'+encodeURIComponent(p.name+' Pantelleria')+'" target="_blank" style="color:#e65100;text-decoration:none;">🧭 Indicazioni</a>';
+    }
     popup += '</div>';
     popup += '</div>';
     marker.bindPopup(popup).openPopup();
@@ -820,6 +827,46 @@ function filterCat(c){
   btns.forEach(function(btn){btn.classList.remove('active');});
   event.target.classList.add('active');
   updateMap();
+}
+
+// GPS Location
+var gpsMarker = null;
+var gpsCircle = null;
+var gpsActive = false;
+var gpsWatchId = null;
+var userLat = null;
+var userLng = null;
+
+function toggleGPS(){
+  if(gpsActive){
+    if(gpsWatchId) navigator.geolocation.clearWatch(gpsWatchId);
+    if(gpsMarker) map.removeLayer(gpsMarker);
+    if(gpsCircle) map.removeLayer(gpsCircle);
+    gpsMarker=null;gpsCircle=null;gpsActive=false;userLat=null;userLng=null;
+    document.getElementById('gps-btn').classList.remove('active');
+    return;
+  }
+  if(!navigator.geolocation){alert('GPS non supportato');return;}
+  gpsActive=true;
+  document.getElementById('gps-btn').classList.add('active');
+  gpsWatchId=navigator.geolocation.watchPosition(function(pos){
+    userLat=pos.coords.latitude;
+    userLng=pos.coords.longitude;
+    var acc=pos.coords.accuracy;
+    if(gpsMarker){
+      gpsMarker.setLatLng([userLat,userLng]);
+      gpsCircle.setLatLng([userLat,userLng]).setRadius(acc);
+    }else{
+      gpsMarker=L.circleMarker([userLat,userLng],{radius:8,fillColor:'#4285f4',fillOpacity:1,color:'#fff',weight:3}).addTo(map);
+      gpsCircle=L.circle([userLat,userLng],{radius:acc,fillColor:'#4285f4',fillOpacity:0.1,color:'#4285f4',weight:1}).addTo(map);
+      map.setView([userLat,userLng],14);
+    }
+  },function(){},{ enableHighAccuracy:true,maximumAge:10000,timeout:10000});
+}
+
+function navBtns(name){
+  if(!userLat)return '';
+  return '<div style="margin-top:6px;font-size:12px;"><a href="https://www.google.com/maps/dir/'+userLat+','+userLng+'/'+encodeURIComponent(name+' Pantelleria')+'" target="_blank" style="color:#1565c0;text-decoration:none;">🧭 Indicazioni Google</a></div>';
 }
 
 // Initial render
