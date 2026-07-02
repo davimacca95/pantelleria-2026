@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Pantelleria 2026 — 4 Giorni</title>
+<title>I Magnifici 7 a Pantelleria</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -68,7 +68,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f5f5f5;c
 <body>
 
 <div class="hero">
-<h1>🏝️ Pantelleria 2026</h1>
+<h1>🏝️ I Magnifici 7 a Pantelleria</h1>
 <p>4 giorni · 13–16 Agosto 2026 · Cibo, Aperitivi & Mare Vulcanico</p>
 <p style="font-size:12px;margin-top:8px;opacity:0.7">La Perla Nera del Mediterraneo</p>
 </div>
@@ -90,6 +90,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f5f5f5;c
 <button class="map-btn" onclick="filterCat('Visite')">Visite</button>
 <button class="map-btn" onclick="filterCat('Cibo')">Cibo</button>
 <button class="map-btn" onclick="filterCat('Aperitivo')">Aperitivo</button>
+<button class="map-btn" onclick="filterCat('Dolci')">Dolci</button>
 <button class="map-btn" onclick="filterCat('Hotel')">Hotel</button>
 </div>
 </div>
@@ -525,6 +526,13 @@ var places = [
   {"name":"Donnafugata Pantelleria","city":"Pantelleria","lat":36.7980,"lng":12.0350,"color":"#f57c00","desc":"Cantina e vigneti Zibibbo UNESCO. Degustazione €40/pers ore 18:30 (donnafugata.it)","category":"Aperitivo","subcat":"Vigneto","icon":"🍇","zone":"Khamma"},
   {"name":"Le Cale Aperitivo","city":"Pantelleria","lat":36.7987,"lng":12.0492,"color":"#f57c00","desc":"Aperitivo con vista Cala Levante. Casual, stessi proprietari di Sesiventi","category":"Aperitivo","subcat":"Aperitivo Bar","icon":"🍹","zone":"Est"},
   {"name":"Caffè Aurora-Policardo","city":"Pantelleria","lat":36.8288,"lng":11.9438,"color":"#f57c00","desc":"Bar storico, granite famose. Preferito da Armani (Frommers)","category":"Aperitivo","subcat":"Caffè","icon":"☕","zone":"Centro"},
+  {"name":"Franco Castiglione","city":"Pantelleria","lat":36.8280,"lng":11.9428,"color":"#e65100","desc":"Pesce, pizza e BBQ. Travelers\u2019 Choice TripAdvisor. Via Borgo Italia 81 (TripAdvisor 173 foto)","category":"Cibo","subcat":"Pizzeria","icon":"🍕","zone":"Centro"},
+  {"name":"Trattoria da Pina","city":"Pantelleria","lat":36.8130,"lng":11.9840,"color":"#e65100","desc":"Ravioli panteschi, stufato di pesce. Travelers\u2019 Choice. Vicino Specchio di Venere (TripAdvisor)","category":"Cibo","subcat":"Trattoria","icon":"🍜","zone":"Nord"},
+  {"name":"Il Gabbiano Azzurro","city":"Pantelleria","lat":36.8282,"lng":11.9445,"color":"#e65100","desc":"Trattoria tradizionale, porzioni generose €20-30. Bacio pantesco. Via Trieste 5 (Grubbio 4.2/5)","category":"Cibo","subcat":"Trattoria","icon":"🍜","zone":"Centro"},
+  {"name":"Strit Fud","city":"Pantelleria","lat":36.8278,"lng":11.9432,"color":"#e65100","desc":"Cucina creativa moderna, rivisitazioni locali. Via Catania 8 (islaguru.com)","category":"Cibo","subcat":"Ristorante","icon":"🍽️","zone":"Centro"},
+  {"name":"La Conchiglia","city":"Pantelleria","lat":36.7880,"lng":12.0320,"color":"#e65100","desc":"Trattoria a Tracino, pesce fresco e cucina casalinga. Atmosfera rilassata (TripAdvisor)","category":"Cibo","subcat":"Trattoria","icon":"🍜","zone":"Est"},
+  {"name":"Pasticceria Katia","city":"Pantelleria","lat":36.8295,"lng":11.9425,"color":"#f57c00","desc":"#1 dolci a Pantelleria. Granite, baci panteschi, gelato. Lungomare Borsellino 84 (TripAdvisor 4.5/5, 794 recensioni)","category":"Dolci","subcat":"Pasticceria","icon":"🍡","zone":"Centro"},
+  {"name":"Cicci\u2019s Beach","city":"Pantelleria","lat":36.7545,"lng":11.9490,"color":"#e65100","desc":"Beach bar a Bue Marino. Snack e pranzi leggeri vista mare, casual (islaguru.com)","category":"Cibo","subcat":"Beach Bar","icon":"🏖️","zone":"Ovest"},
   {"name":"Dammuso Arco dell\u2019Elefante","city":"Pantelleria","lat":36.7872,"lng":12.0487,"color":"#6a1b9a","desc":"Villa tipica siciliana con 3 camere, vista mare. Contrada Khamma 109 (Booking.com)","category":"Hotel","subcat":"Hotel","icon":"🏨","zone":"Khamma"}
 ];
 
@@ -567,17 +575,21 @@ var subcatToMacro = {
   "Monumento":"Visite",
   "Ristorante":"Cibo",
   "Trattoria":"Cibo",
+  "Pizzeria":"Cibo",
+  "Beach Bar":"Cibo",
   "Aperitivo Bar":"Aperitivo",
   "Vigneto":"Aperitivo",
   "Enoteca":"Aperitivo",
   "Caffè":"Aperitivo",
+  "Pasticceria":"Dolci",
   "Hotel":"Hotel"
 };
 
 var subcatGroups = {
   "Visite":["Natura","Mare","Monumento"],
-  "Cibo":["Ristorante","Trattoria"],
+  "Cibo":["Ristorante","Trattoria","Pizzeria","Beach Bar"],
   "Aperitivo":["Aperitivo Bar","Vigneto","Enoteca","Caffè"],
+  "Dolci":["Pasticceria"],
   "Hotel":["Hotel"]
 };
 
@@ -624,7 +636,7 @@ var curCat = 'all';
 
 function macroColor(subcat){
   var macro = subcatToMacro[subcat]||'Altro';
-  var colors = {"Visite":"#A8C4D8","Cibo":"#DEC49A","Aperitivo":"#F1B792","Hotel":"#C4A8C4","Altro":"#C1C1C1"};
+  var colors = {"Visite":"#A8C4D8","Cibo":"#DEC49A","Aperitivo":"#F1B792","Dolci":"#F1B792","Hotel":"#C4A8C4","Altro":"#C1C1C1"};
   return colors[macro]||"#C1C1C1";
 }
 
@@ -635,10 +647,13 @@ function subcatIcon(subcat){
     "Monumento":"🏰",
     "Ristorante":"🍽️",
     "Trattoria":"🍜",
+    "Pizzeria":"🍕",
+    "Beach Bar":"🏖️",
     "Aperitivo Bar":"🥂",
     "Vigneto":"🍇",
     "Enoteca":"🍷",
     "Caffè":"☕",
+    "Pasticceria":"🍡",
     "Hotel":"🏨"
   };
   return icons[subcat]||"📌";
