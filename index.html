@@ -85,8 +85,28 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f5f5f5;c
 <div class="hero">
 <h1>🏝️ I Magnifici 7 a Pantelleria</h1>
 <p>4 giorni · 13–16 Agosto 2026 · Cibo, Aperitivi & Mare Vulcanico</p>
+<div id="countdown" style="margin-top:12px;font-size:15px;font-weight:600;background:rgba(255,255,255,0.15);display:inline-block;padding:6px 16px;border-radius:20px;"></div>
 <p style="font-size:12px;margin-top:8px;opacity:0.7">La Perla Nera del Mediterraneo</p>
 </div>
+<script>
+(function(){
+  var tripDate=new Date('2026-08-13T08:10:00+02:00');
+  function update(){
+    var now=new Date();
+    var diff=tripDate-now;
+    var el=document.getElementById('countdown');
+    if(diff<=0){el.textContent='🎉 SIAMO A PANTELLERIA!';return;}
+    var d=Math.floor(diff/86400000);
+    var h=Math.floor((diff%86400000)/3600000);
+    var m=Math.floor((diff%3600000)/60000);
+    var s=Math.floor((diff%60000)/1000);
+    if(d>0){el.textContent='✈️ Mancano '+d+' giorni, '+h+'h '+m+'m '+s+'s';}
+    else{el.textContent='✈️ Mancano '+h+'h '+m+'m '+s+'s!';}
+    setTimeout(update,1000);
+  }
+  update();
+})();
+</script>
 
 <div class="map-section">
 <div id="map"></div>
