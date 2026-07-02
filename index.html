@@ -533,6 +533,14 @@ var places = [
   {"name":"La Conchiglia","city":"Pantelleria","lat":36.7880,"lng":12.0320,"color":"#e65100","desc":"Trattoria a Tracino, pesce fresco e cucina casalinga. Atmosfera rilassata (TripAdvisor)","category":"Cibo","subcat":"Trattoria","icon":"🍜","zone":"Est"},
   {"name":"Pasticceria Katia","city":"Pantelleria","lat":36.8295,"lng":11.9425,"color":"#f57c00","desc":"#1 dolci a Pantelleria. Granite, baci panteschi, gelato. Lungomare Borsellino 84 (TripAdvisor 4.5/5, 794 recensioni)","category":"Dolci","subcat":"Pasticceria","icon":"🍡","zone":"Centro"},
   {"name":"Cicci\u2019s Beach","city":"Pantelleria","lat":36.7545,"lng":11.9490,"color":"#e65100","desc":"Beach bar a Bue Marino. Snack e pranzi leggeri vista mare, casual (islaguru.com)","category":"Cibo","subcat":"Beach Bar","icon":"🏖️","zone":"Ovest"},
+  {"name":"Themà (Sikelia)","city":"Pantelleria","lat":36.7682,"lng":11.9602,"color":"#e65100","desc":"Fine dining nel resort Sikelia. Chef Fredrik Andersson. Pesce, pasta, amuse-bouche (whatkirstydidnext)","category":"Cibo","subcat":"Ristorante","icon":"🍽️","zone":"Scauri"},
+  {"name":"Runcune","city":"Pantelleria","lat":36.7720,"lng":11.9680,"color":"#e65100","desc":"Trattoria pantesca con terrazza vista mare. Ravioli, coniglio, pesce (whatkirstydidnext)","category":"Cibo","subcat":"Trattoria","icon":"🍜","zone":"Scauri"},
+  {"name":"Ristorante La Vela","city":"Pantelleria","lat":36.7688,"lng":11.9608,"color":"#e65100","desc":"Pasta di mare e pizza, dining casual al porto di Scauri. 1014 recensioni (TripAdvisor, russh.com)","category":"Cibo","subcat":"Pizzeria","icon":"🍕","zone":"Scauri"},
+  {"name":"Altamarea","city":"Pantelleria","lat":36.8292,"lng":11.9430,"color":"#e65100","desc":"Ristorante al porto. Pesce fresco, mediterraneo, atmosfera romantica/casual (menufyy.com)","category":"Cibo","subcat":"Ristorante","icon":"🍽️","zone":"Centro"},
+  {"name":"La Portella","city":"Pantelleria","lat":36.7875,"lng":12.0320,"color":"#e65100","desc":"Pizza, bistecca, pesce a Piazza Perugia. Bar serale con musica. 181 recensioni (TripAdvisor)","category":"Cibo","subcat":"Pizzeria","icon":"🍕","zone":"Khamma"},
+  {"name":"Bar Beluga","city":"Pantelleria","lat":36.7878,"lng":12.0325,"color":"#f57c00","desc":"Caffè/bar a Piazza Perugia, Khamma. Gelato, snack, oasi sulla strada interna (TripAdvisor 4.5/5)","category":"Aperitivo","subcat":"Caffè","icon":"☕","zone":"Khamma"},
+  {"name":"Panificio Marrone","city":"Pantelleria","lat":36.8275,"lng":11.9440,"color":"#e65100","desc":"Panetteria tradizionale. Focaccia, cannoli, pizza al taglio, tumo. Ideale per picnic (Faithfull/russh)","category":"Cibo","subcat":"Panificio","icon":"🥖","zone":"Centro"},
+  {"name":"Azienda Bonomo","city":"Pantelleria","lat":36.7950,"lng":12.0100,"color":"#f57c00","desc":"Farm shop con aperitivo nel giardino. Frutta bio, conserve, olio, vino locale (Faithfull/russh)","category":"Aperitivo","subcat":"Vigneto","icon":"🍇","zone":"Khamma"},
   {"name":"Dammuso Arco dell\u2019Elefante","city":"Pantelleria","lat":36.7872,"lng":12.0487,"color":"#6a1b9a","desc":"Villa tipica siciliana con 3 camere, vista mare. Contrada Khamma 109 (Booking.com)","category":"Hotel","subcat":"Hotel","icon":"🏨","zone":"Khamma"}
 ];
 
@@ -577,6 +585,7 @@ var subcatToMacro = {
   "Trattoria":"Cibo",
   "Pizzeria":"Cibo",
   "Beach Bar":"Cibo",
+  "Panificio":"Cibo",
   "Aperitivo Bar":"Aperitivo",
   "Vigneto":"Aperitivo",
   "Enoteca":"Aperitivo",
@@ -587,7 +596,7 @@ var subcatToMacro = {
 
 var subcatGroups = {
   "Visite":["Natura","Mare","Monumento"],
-  "Cibo":["Ristorante","Trattoria","Pizzeria","Beach Bar"],
+  "Cibo":["Ristorante","Trattoria","Pizzeria","Beach Bar","Panificio"],
   "Aperitivo":["Aperitivo Bar","Vigneto","Enoteca","Caffè"],
   "Dolci":["Pasticceria"],
   "Hotel":["Hotel"]
@@ -649,6 +658,7 @@ function subcatIcon(subcat){
     "Trattoria":"🍜",
     "Pizzeria":"🍕",
     "Beach Bar":"🏖️",
+    "Panificio":"🥖",
     "Aperitivo Bar":"🥂",
     "Vigneto":"🍇",
     "Enoteca":"🍷",
