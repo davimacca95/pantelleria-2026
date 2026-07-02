@@ -15,7 +15,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f5f5f5;c
 .hero p{opacity:0.85;font-size:15px}
 .container{max-width:800px;margin:0 auto;padding:20px 16px}
 .map-section{position:sticky;top:0;z-index:100;background:#fff;border-bottom:2px solid #e0e0e0;margin-bottom:20px}
-#map{height:45vh;width:100%;min-height:300px}
+#map{height:40vh;width:100%;min-height:250px;max-height:350px}
 .map-controls{padding:8px 12px;display:flex;flex-wrap:wrap;gap:6px;background:#fafafa;border-top:1px solid #eee}
 .map-btn{padding:4px 10px;border-radius:14px;border:1px solid #ccc;background:#fff;font-size:12px;cursor:pointer;white-space:nowrap}
 .map-btn.active{background:#1565c0;color:#fff;border-color:#1565c0}
@@ -866,7 +866,8 @@ function toggleGPS(){
     document.getElementById('gps-btn').classList.remove('active');
     return;
   }
-  if(!navigator.geolocation){alert('GPS non supportato');return;}
+  if(!navigator.geolocation){alert('GPS non supportato dal browser');return;}
+  if(location.protocol==='file:'){alert('⚠️ GPS non funziona su file locale.\nApri da GitHub Pages:\nhttps://davimacca95.github.io/pantelleria-2026/');return;}
   gpsActive=true;
   document.getElementById('gps-btn').classList.add('active');
   gpsWatchId=navigator.geolocation.watchPosition(function(pos){
@@ -881,7 +882,13 @@ function toggleGPS(){
       gpsCircle=L.circle([userLat,userLng],{radius:acc,fillColor:'#4285f4',fillOpacity:0.1,color:'#4285f4',weight:1}).addTo(map);
       map.setView([userLat,userLng],14);
     }
-  },function(){},{ enableHighAccuracy:true,maximumAge:10000,timeout:10000});
+  },function(err){
+    gpsActive=false;
+    document.getElementById('gps-btn').classList.remove('active');
+    if(err.code===1) alert('📍 Permesso GPS negato. Consenti la posizione nelle impostazioni del browser.');
+    else if(err.code===2) alert('📍 Posizione non disponibile. Sei al chiuso?');
+    else alert('📍 Timeout GPS. Riprova.');
+  },{ enableHighAccuracy:true,maximumAge:10000,timeout:15000});
 }
 
 function navBtns(name){
