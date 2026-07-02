@@ -63,18 +63,21 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f5f5f5;c
 .info-section h3{font-size:15px;margin:12px 0 6px;color:#333}
 .info-section ul{padding-left:20px;font-size:14px}
 .info-section li{margin-bottom:6px}
-.alt-fork{margin:12px 0;border:2px solid #e0e0e0;border-radius:10px;padding:12px;background:#fafafa}
-.alt-options{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.alt-option{background:#fff;border-radius:8px;padding:12px;border:1px solid #e8e8e8}
-.alt-option.opt-a{border-left:3px solid #1565c0}
-.alt-option.opt-b{border-left:3px solid #e65100}
-.alt-option h4{font-size:14px;margin:0 0 8px;color:#333}
-.opt-badge{display:inline-block;width:20px;height:20px;border-radius:50%;text-align:center;line-height:20px;font-size:11px;font-weight:700;color:#fff;margin-right:6px}
+.alt-fork{background:linear-gradient(135deg,#fff8e1,#fff3e0);border:2px dashed #ff9800;border-radius:14px;padding:18px;margin:15px 0;position:relative}
+.alt-fork::before{content:'⚡ SCEGLI UN\'OPZIONE';position:absolute;top:-12px;left:20px;background:#ff9800;color:#fff;padding:3px 14px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:0.5px}
+.alt-options{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px}
+.alt-option{background:#fff;border-radius:10px;padding:14px;border-left:4px solid #c9a96e;position:relative}
+.alt-option.opt-a{border-left-color:#1565c0}
+.alt-option.opt-b{border-left-color:#e65100}
+.alt-option h4{font-size:0.95em;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.alt-option h4 .opt-badge{padding:2px 8px;border-radius:10px;font-size:0.75em;color:#fff;font-weight:700}
 .opt-a .opt-badge{background:#1565c0}
 .opt-b .opt-badge{background:#e65100}
-.alt-item{font-size:13px;margin:4px 0;line-height:1.5}
-.alt-icon{margin-right:4px}
-.alt-note{font-size:12px;color:#666;margin-top:6px;font-style:italic}
+.alt-option .alt-item{font-size:0.85em;padding:4px 0;border-bottom:1px solid #f0ebe3}
+.alt-option .alt-item:last-child{border-bottom:none}
+.alt-option .alt-item .alt-icon{margin-right:4px}
+.alt-option .alt-note{font-size:0.8em;color:#888;margin-top:6px;font-style:italic}
+@media(max-width:600px){.alt-options{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
