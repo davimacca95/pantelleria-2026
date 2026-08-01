@@ -47,6 +47,7 @@ a{color:var(--accent);text-decoration:none}
 .map-section{position:relative;overflow:hidden;transition:height .35s cubic-bezier(.4,0,.2,1);height:200px}
 .map-section.expanded{height:50vh}
 .map-section.hidden{height:0}
+.map-section.off{display:none}
 #map{width:100%;height:100%}
 .map-expand{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);background:var(--card);padding:6px 14px;border-radius:20px;font-size:11px;font-weight:600;color:var(--text2);box-shadow:var(--shadow-md);z-index:500;display:flex;align-items:center;gap:4px}
 .map-expand:active{transform:translateX(-50%) scale(0.95)}
@@ -192,6 +193,7 @@ a{color:var(--accent);text-decoration:none}
     <h1>🏝️ Pantelleria</h1>
     <span id="countdown-mini"></span>
   </div>
+  <button class="topbar-btn" onclick="toggleView()" id="viewBtn" title="Mostra solo testo">📖</button>
   <button class="topbar-btn" onclick="toggleTheme()">🌙</button>
 </div>
 
@@ -722,6 +724,8 @@ document.addEventListener('click',function(e){
   var ev=e.target.closest('.ev');
   if(!ev||!ev.querySelector('.ev-expand'))return;
   if(e.target.closest('a')||e.target.closest('.ev-done-btn'))return;
+  // In full text mode, don't collapse cards
+  if(fullText)return;
   // Close other open cards
   document.querySelectorAll('.ev.open').forEach(function(other){
     if(other!==ev)other.classList.remove('open');
@@ -764,6 +768,32 @@ function restoreDoneState(){
   });
 }
 restoreDoneState();
+
+// View toggle (map+cards vs full text)
+var fullText=false;
+function toggleView(){
+  fullText=!fullText;
+  var ms=document.getElementById('mapSection');
+  var tabs=document.getElementById('dayTabs');
+  var gps=document.getElementById('gpsBtn');
+  var mapT=document.getElementById('mapToggle');
+  var btn=document.getElementById('viewBtn');
+  if(fullText){
+    ms.classList.add('off');
+    tabs.style.top='61px';
+    btn.textContent='🗺️';
+    // Expand all cards
+    document.querySelectorAll('.ev').forEach(function(ev){if(ev.querySelector('.ev-expand'))ev.classList.add('open');});
+    document.querySelectorAll('.hotel-bar').forEach(function(h){h.classList.add('open');});
+  }else{
+    ms.classList.remove('off');
+    btn.textContent='📖';
+    // Collapse all cards
+    document.querySelectorAll('.ev.open').forEach(function(ev){ev.classList.remove('open');});
+    document.querySelectorAll('.hotel-bar.open').forEach(function(h){h.classList.remove('open');});
+    setTimeout(function(){map.invalidateSize();},400);
+  }
+}
 
 // Map toggle
 var mapExpanded=false;
