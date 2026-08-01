@@ -46,7 +46,7 @@ a{color:var(--accent);text-decoration:none}
 /* ═══ MAP SECTION ═══ */
 .map-section{position:relative;overflow:hidden;transition:height .35s cubic-bezier(.4,0,.2,1);height:200px}
 .map-section.expanded{height:50vh}
-.map-section.hidden{height:0}
+body.fulltext .map-section{height:0}
 #map{width:100%;height:100%}
 .map-expand{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);background:var(--card);padding:6px 14px;border-radius:20px;font-size:11px;font-weight:600;color:var(--text2);box-shadow:var(--shadow-md);z-index:500;display:flex;align-items:center;gap:4px}
 .map-expand:active{transform:translateX(-50%) scale(0.95)}
@@ -177,10 +177,13 @@ a{color:var(--accent);text-decoration:none}
 /* ═══ DESKTOP ═══ */
 @media(min-width:768px){
   .map-section{position:fixed;top:61px;right:0;width:45%;height:calc(100vh - 61px);z-index:50}
-  .map-section.hidden{width:0}
   .map-expand{display:none}
   .day-tabs{max-width:55%;position:sticky;top:61px}
   .content{max-width:55%;padding-right:24px}
+  /* Full-text mode: map away, text gets the whole window */
+  body.fulltext .map-section{width:0;height:calc(100vh - 61px)}
+  body.fulltext .day-tabs{max-width:100%}
+  body.fulltext .content{max-width:900px;margin:0 auto;padding-right:16px}
 }
 </style>
 </head>
@@ -736,6 +739,7 @@ document.addEventListener('click',function(e){
     var ms=document.getElementById('mapSection');
     if(!ms.classList.contains('expanded')){
       ms.classList.add('expanded');
+      mapExpanded=true;
       document.getElementById('mapIcon').textContent='▲';
       setTimeout(function(){map.invalidateSize();map.flyTo([lat,lng],15,{duration:0.6});},400);
     }else{
@@ -768,19 +772,24 @@ function restoreDoneState(){
 }
 restoreDoneState();
 
-// Full text mode — expand all cards, keep map on top
+// Full text mode — hide the map, expand every card
 var fullText=false;
 function toggleView(){
   fullText=!fullText;
   var btn=document.getElementById('viewBtn');
+  document.body.classList.toggle('fulltext',fullText);
   if(fullText){
     btn.textContent='🗺️';
+    btn.title='Torna alla mappa';
     document.querySelectorAll('.ev').forEach(function(ev){if(ev.querySelector('.ev-expand'))ev.classList.add('open');});
     document.querySelectorAll('.hotel-bar').forEach(function(h){h.classList.add('open');});
   }else{
     btn.textContent='📖';
+    btn.title='Mostra solo testo';
     document.querySelectorAll('.ev.open').forEach(function(ev){ev.classList.remove('open');});
     document.querySelectorAll('.hotel-bar.open').forEach(function(h){h.classList.remove('open');});
+    // Map was collapsed to 0 — Leaflet needs to re-measure when it comes back
+    setTimeout(function(){map.invalidateSize();},400);
   }
 }
 
