@@ -122,6 +122,11 @@ body.fulltext .cat-filters{display:none}
 .ev-action{display:inline-flex;align-items:center;gap:4px;padding:8px 12px;border-radius:8px;background:var(--bg);font-size:12px;font-weight:600;color:var(--accent);border:1px solid var(--border)}
 .ev-action:active{transform:scale(0.95);background:var(--accent);color:#fff}
 
+/* Always-visible Maps link — works with the card collapsed */
+.ev-quick{margin-top:8px}
+.ev-map-link{display:inline-flex;align-items:center;gap:4px;padding:6px 11px;border-radius:8px;background:var(--bg);border:1px solid var(--border);font-size:11.5px;font-weight:600;color:var(--accent)}
+.ev-map-link:active{transform:scale(0.95);background:var(--accent);color:#fff}
+
 /* Tools cluster: check + chevron, top-right of every card */
 .ev-tools{position:absolute;right:12px;top:12px;display:flex;align-items:center;gap:6px;z-index:2}
 .ev-check{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--border);background:var(--card);color:var(--text3);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;transition:all .2s}
@@ -232,6 +237,10 @@ body.fulltext .cat-filters{display:none}
   a{color:#000;text-decoration:none}
   /* Show the URL behind each link — a printed link is useless otherwise */
   .ev-detail a::after{content:" (" attr(href) ")";font-size:8pt;color:#555}
+  /* A tappable button is meaningless on paper — print the destination instead */
+  .ev-quick{margin-top:4px}
+  .ev-map-link{border:none;background:none!important;padding:0;font-size:9pt;color:#555!important}
+  .ev-map-link::after{content:" \2192 " attr(href);font-size:7.5pt;color:#777}
 }
 </style>
 </head>
@@ -318,6 +327,7 @@ body.fulltext .cat-filters{display:none}
         <div class="ev-time">08:10 – 08:50</div>
         <div class="ev-name">✈️ Trapani → Pantelleria <span class="badge">PRENOTATO</span></div>
         <div class="ev-desc">DX1831 · DAT Airlines · 40min · 3 pax</div>
+        <div class="ev-quick"><a class="ev-map-link" href="https://www.google.com/maps/search/Aeroporto+di+Pantelleria" target="_blank">📍 Apri in Maps</a></div>
         <div class="ev-expand">
           <div class="ev-detail">🎫 Ref: YYA3VX · Maccarrone, Prinzivalli, Alagna<br>🧳 1×8kg mano + 1×23kg stiva<br>📱 Check-in online 22h prima<br>💰 €234.72 pagato</div>
         </div>
@@ -329,6 +339,7 @@ body.fulltext .cat-filters{display:none}
         <div class="ev-time">09:00</div>
         <div class="ev-name">🚗 Ritiro auto — Sicily By Car <span class="badge">PRENOTATO</span></div>
         <div class="ev-desc">Citroën C3 · Km illimitati · Riconsegna 16/08 ore 18:00</div>
+        <div class="ev-quick"><a class="ev-map-link" href="https://www.google.com/maps/search/Aeroporto+di+Pantelleria" target="_blank">📍 Apri in Maps</a></div>
         <div class="ev-expand">
           <div class="ev-detail">📍 Via Madonna della Margana, PNL<br>📞 +39 0923 912940<br>🎫 Ref: 757392604 · IT588008819<br>💳 Deposito €200 · Franchigia €1.464<br>⛽ Restituire stesso livello</div>
         </div>
@@ -340,11 +351,10 @@ body.fulltext .cat-filters{display:none}
         <div class="ev-time">09:30</div>
         <div class="ev-name">🏠 Check-in Dammuso</div>
         <div class="ev-desc">Contrada Khamma 109 · Villa 3 camere vista mare · ~15min aeroporto</div>
+        <div class="ev-quick"><a class="ev-map-link" href="https://www.google.com/maps/search/Dammuso+Arco+Elefante+Pantelleria" target="_blank">📍 Apri in Maps</a></div>
         <div class="ev-expand">
           <div class="ev-detail">📞 +39 0923 915585<br>🏠 3 camere · 7 ospiti · A/C, cucina, BBQ, patio<br>💰 €1.975,05 (Booking.com)<br>💡 Dammuso: muri pietra lavica con cupola</div>
-          <div class="ev-actions">
-            <a class="ev-action" href="https://www.google.com/maps/search/Dammuso+Arco+Elefante+Pantelleria" target="_blank">📍 Maps</a>
-          </div>
+          
         </div>
       </div>
     </div>
@@ -354,11 +364,10 @@ body.fulltext .cat-filters{display:none}
         <div class="ev-time">10:30 – 12:30</div>
         <div class="ev-name">🌊 Cala Levante + Arco dell'Elefante</div>
         <div class="ev-desc">Primo tuffo! Snorkeling eccellente, vista sull'Arco iconico di Pantelleria</div>
+        <div class="ev-quick"><a class="ev-map-link" href="https://www.google.com/maps/search/Cala+Levante+Pantelleria" target="_blank">📍 Apri in Maps</a></div>
         <div class="ev-expand">
           <div class="ev-detail">🐘 L'Arco dell'Elefante visibile dalla baia<br>👟 Scarpette obbligatorie<br>🏊 Fondali bassi → profondi<br>💡 A pochi minuti dal dammuso!</div>
-          <div class="ev-actions">
-            <a class="ev-action" href="https://www.google.com/maps/search/Cala+Levante+Pantelleria" target="_blank">📍 Maps</a>
-          </div>
+          
         </div>
       </div>
     </div>
@@ -368,11 +377,10 @@ body.fulltext .cat-filters{display:none}
         <div class="ev-time">13:00 – 14:30</div>
         <div class="ev-name">🍽️ Pranzo — Le Cale</div>
         <div class="ev-desc">Terrazza vista Cala Levante · Pesce fresco, capperi e bottarga</div>
+        <div class="ev-quick"><a class="ev-map-link" href="https://www.google.com/maps/search/Le+Cale+Pantelleria" target="_blank">📍 Apri in Maps</a></div>
         <div class="ev-expand">
           <div class="ev-detail">📍 Contrada Cala Levante 34<br>💰 €€-€€€ · ~€30-40/persona<br>🐟 Prenota tavolo fronte mare<br>💡 Stessi proprietari di Sesiventi</div>
-          <div class="ev-actions">
-            <a class="ev-action" href="https://www.google.com/maps/search/Le+Cale+Pantelleria" target="_blank">📍 Maps</a>
-          </div>
+          
         </div>
       </div>
     </div>
@@ -382,11 +390,10 @@ body.fulltext .cat-filters{display:none}
         <div class="ev-time">15:00 – 17:00</div>
         <div class="ev-name">♨️ Cala Gadir — Terme naturali</div>
         <div class="ev-desc">Vasche 35-40°C in roccia vulcanica · Gratuite 24/7 · Perfetto nel pomeriggio</div>
+        <div class="ev-quick"><a class="ev-map-link" href="https://www.google.com/maps/search/Cala+Gadir+Pantelleria" target="_blank">📍 Apri in Maps</a></div>
         <div class="ev-expand">
           <div class="ev-detail">👟 Rocce scivolose — scarpette!<br>💡 Meno gente nel tardo pomeriggio, luce magica</div>
-          <div class="ev-actions">
-            <a class="ev-action" href="https://www.google.com/maps/search/Cala+Gadir+Pantelleria" target="_blank">📍 Maps</a>
-          </div>
+          
         </div>
       </div>
     </div>
@@ -396,11 +403,10 @@ body.fulltext .cat-filters{display:none}
         <div class="ev-time">18:30 – 20:00</div>
         <div class="ev-name">🍇 Donnafugata <span class="badge">PRENOTATO</span></div>
         <div class="ev-desc">Vigneto Zibibbo UNESCO · Tour + 3 vini + Passito Ben Ryè · €280 pagato</div>
+        <div class="ev-quick"><a class="ev-map-link" href="https://www.google.com/maps/search/Donnafugata+Pantelleria" target="_blank">📍 Apri in Maps</a></div>
         <div class="ev-expand">
           <div class="ev-detail">📍 Contrada Khamma Fuori 6<br>📞 +39 0923 915 649<br>🎫 Ref: 01-P-20260813-D-BK-013<br>👤 Antonio Alagna · 3339182554<br>👥 7 adulti<br>⏰ Arriva 10 min prima · ~1.5h<br>⚠️ Cancellazione: iscritto entro 2gg feriali</div>
-          <div class="ev-actions">
-            <a class="ev-action" href="https://www.google.com/maps/search/Donnafugata+Pantelleria" target="_blank">📍 Maps</a>
-          </div>
+          
         </div>
       </div>
     </div>
@@ -439,11 +445,10 @@ body.fulltext .cat-filters{display:none}
         <div class="ev-time">07:30 – 10:00</div>
         <div class="ev-name">🌋 Specchio di Venere + Fanghi</div>
         <div class="ev-desc">Vai PRESTO! Lago vulcanico + fanghi sulla riva sud. Gratuito</div>
+        <div class="ev-quick"><a class="ev-map-link" href="https://www.google.com/maps/search/Specchio+di+Venere+Pantelleria" target="_blank">📍 Apri in Maps</a></div>
         <div class="ev-expand">
           <div class="ev-detail">♨️ Acqua ~40°C · 🧖 Fanghi: spalma + secca al sole<br>⏰ Entro le 8! Poi affollatissimo<br>💡 Zero ombra! Porta acqua + crema solare</div>
-          <div class="ev-actions">
-            <a class="ev-action" href="https://www.google.com/maps/search/Specchio+di+Venere+Pantelleria" target="_blank">📍 Maps</a>
-          </div>
+          
         </div>
       </div>
     </div>
@@ -453,11 +458,10 @@ body.fulltext .cat-filters{display:none}
         <div class="ev-time">10:15 – 11:00</div>
         <div class="ev-name">🏰 Sesi di Mursia</div>
         <div class="ev-desc">Tombe megalitiche Età del Bronzo · 50+ monumenti · Gratuito</div>
+        <div class="ev-quick"><a class="ev-map-link" href="https://www.google.com/maps/search/Sesi+di+Mursia+Pantelleria" target="_blank">📍 Apri in Maps</a></div>
         <div class="ev-expand">
           <div class="ev-detail">🏛️ Uniche nel Mediterraneo · ⏱️ ~30-45 min<br>💡 Sesiventi è vicino — ricognizione per stasera!</div>
-          <div class="ev-actions">
-            <a class="ev-action" href="https://www.google.com/maps/search/Sesi+di+Mursia+Pantelleria" target="_blank">📍 Maps</a>
-          </div>
+          
         </div>
       </div>
     </div>
@@ -483,6 +487,7 @@ body.fulltext .cat-filters{display:none}
         <div class="ev-time">15:30</div>
         <div class="ev-name">🚗 Rientro + 🚿 Docce</div>
         <div class="ev-desc">~20 min dalla costa ovest. 7 persone = preparatevi per Sesiventi! Eleganti!</div>
+        <div class="ev-quick"><a class="ev-map-link" href="https://www.google.com/maps/search/Contrada+Khamma+109+Pantelleria" target="_blank">📍 Apri in Maps</a></div>
       </div>
     </div>
 
@@ -491,11 +496,10 @@ body.fulltext .cat-filters{display:none}
         <div class="ev-time">19:00 – tardi</div>
         <div class="ev-name">🥂 Sesiventi — Rooftop + DJ + DISCO <span class="badge">PRENOTATO</span></div>
         <div class="ev-desc">€40/pers · Drink + piatto (porzioni ENORMI = è la vostra cena!)</div>
+        <div class="ev-quick"><a class="ev-map-link" href="https://www.google.com/maps/search/Sesiventi+Pantelleria" target="_blank">📍 Apri in Maps</a></div>
         <div class="ev-expand">
           <div class="ev-detail">📍 Mursia, Altopiano dei Sesi<br>📞 +39 350 528 2450<br>🍾 Spumante + cocktail premium<br>🍽️ Polpette, tartare, fritto, tapas<br>👟 Scarpe giù sul rooftop · 👔 Dress code elegante<br>🎵 DJ tramonto → DISCO NIGHT<br>🌙 Si resta qui tutta sera!<br>💡 Fame tardi? Altamarea fino alle 7:00</div>
-          <div class="ev-actions">
-            <a class="ev-action" href="https://www.google.com/maps/search/Sesiventi+Pantelleria" target="_blank">📍 Maps</a>
-          </div>
+          
         </div>
       </div>
     </div>
@@ -526,11 +530,10 @@ body.fulltext .cat-filters{display:none}
         <div class="ev-time">09:00 ⚠️</div>
         <div class="ev-name">📍 Ritrovo 30 MIN PRIMA <span class="badge">PRENOTATO</span></div>
         <div class="ev-desc">Lungomare Borsellino 84 · Non perdere il turno!</div>
+        <div class="ev-quick"><a class="ev-map-link" href="https://www.google.com/maps/search/Lungomare+Borsellino+84+Pantelleria" target="_blank">📍 Apri in Maps</a></div>
         <div class="ev-expand">
           <div class="ev-detail">⚠️ ORE 09:00 (30 min prima della partenza)<br>📍 Lungomare Paolo Borsellino, 84<br>🚗 Dal dammuso: ~15 min</div>
-          <div class="ev-actions">
-            <a class="ev-action" href="https://www.google.com/maps/search/Lungomare+Borsellino+84+Pantelleria" target="_blank">📍 Maps</a>
-          </div>
+          
         </div>
       </div>
     </div>
@@ -540,11 +543,10 @@ body.fulltext .cat-filters{display:none}
         <div class="ev-time">09:30 – 17:00</div>
         <div class="ev-name">⛵ Tour Isola in Yacht <span class="badge">PRENOTATO</span></div>
         <div class="ev-desc">Circumnavigazione completa · Cale, grotte, pranzo a bordo · 7 biglietti</div>
+        <div class="ev-quick"><a class="ev-map-link" href="https://www.google.com/maps/search/Porto+Pantelleria" target="_blank">📍 Apri in Maps</a></div>
         <div class="ev-expand">
           <div class="ev-detail">⛵ Tour con Simone & Luck<br>🎫 GYG7VKVW75Y3 · PIN: 3D7BBQp1<br>👥 7 biglietti · GetYourGuide<br>📞 +39 06 9674 1658 (24/7)<br>⚠️ Cancel gratuita entro 09:30 del 14/08<br><br>🌊 Cale nascoste · Grotte · Arco dal mare · Bolle Nikà · Balata dei Turchi<br>🍝 Pranzo a bordo incluso<br>💡 Porta: costume, crema, asciugamano, maschera</div>
-          <div class="ev-actions">
-            <a class="ev-action" href="https://www.google.com/maps/search/Porto+Pantelleria" target="_blank">📍 Maps</a>
-          </div>
+          
         </div>
       </div>
     </div>
@@ -554,6 +556,7 @@ body.fulltext .cat-filters{display:none}
         <div class="ev-time">17:00 – 19:00</div>
         <div class="ev-name">🚗 Rientro + 🚿 Docce</div>
         <div class="ev-desc">Porto → dammuso ~15 min · 1h45 per 7 persone · Vestitevi per uscire!</div>
+        <div class="ev-quick"><a class="ev-map-link" href="https://www.google.com/maps/search/Contrada+Khamma+109+Pantelleria" target="_blank">📍 Apri in Maps</a></div>
       </div>
     </div>
 
@@ -562,11 +565,10 @@ body.fulltext .cat-filters{display:none}
         <div class="ev-time">21:30 – 23:00</div>
         <div class="ev-name">🍽️ Trattoria da Pina <span class="badge">PRENOTATO</span></div>
         <div class="ev-desc">Ravioli panteschi (ricotta+menta) · Stufato · Travelers' Choice</div>
+        <div class="ev-quick"><a class="ev-map-link" href="https://www.google.com/maps/search/Trattoria+da+Pina+Pantelleria" target="_blank">📍 Apri in Maps</a></div>
         <div class="ev-expand">
           <div class="ev-detail">📍 Via Lago 34 (nord, vicino Specchio)<br>⏰ Ore 21:30 · 👥 7 persone<br>💰 €€ · ~€25-35/persona<br>💡 Preferito dai locali!</div>
-          <div class="ev-actions">
-            <a class="ev-action" href="https://www.google.com/maps/search/Trattoria+da+Pina+Pantelleria" target="_blank">📍 Maps</a>
-          </div>
+          
         </div>
       </div>
     </div>
@@ -613,11 +615,10 @@ body.fulltext .cat-filters{display:none}
         <div class="ev-time">10:30 – 11:30</div>
         <div class="ev-name">🍡 Pasticceria Katia + Panificio Marrone</div>
         <div class="ev-desc">Granite, baci panteschi, gelato (#1 isola) · Focaccia e cannoli da portare</div>
+        <div class="ev-quick"><a class="ev-map-link" href="https://www.google.com/maps/search/Pasticceria+Katia+Pantelleria" target="_blank">📍 Apri in Maps</a></div>
         <div class="ev-expand">
           <div class="ev-detail">📍 Katia: Lungomare Borsellino · ⭐ 4.5/5 (794 rec.)<br>🍡 Bacio pantesco, granita gelsi, pistacchio<br>📍 Marrone: Via Borgo Italia<br>💡 Prendi qualcosa per l'aereo!</div>
-          <div class="ev-actions">
-            <a class="ev-action" href="https://www.google.com/maps/search/Pasticceria+Katia+Pantelleria" target="_blank">📍 Maps</a>
-          </div>
+          
         </div>
       </div>
     </div>
@@ -635,11 +636,10 @@ body.fulltext .cat-filters{display:none}
         <div class="ev-time">13:30 – 14:30</div>
         <div class="ev-name">🛍️ Ultimo shopping — Centro</div>
         <div class="ev-desc">Castello Barbacane · La Nicchia (capperi) · Caffè Aurora (granite)</div>
+        <div class="ev-quick"><a class="ev-map-link" href="https://www.google.com/maps/search/Castello+Barbacane+Pantelleria" target="_blank">📍 Apri in Maps</a></div>
         <div class="ev-expand">
           <div class="ev-detail">🏰 Castello: fortezza medievale, gratis<br>🛍️ La Nicchia: capperi, conserve top<br>🍷 Passito: Ben Ryè o Coste Ghirlanda<br>☕ Aurora: granite storiche</div>
-          <div class="ev-actions">
-            <a class="ev-action" href="https://www.google.com/maps/search/Castello+Barbacane+Pantelleria" target="_blank">📍 Maps</a>
-          </div>
+          
         </div>
       </div>
     </div>
@@ -649,6 +649,7 @@ body.fulltext .cat-filters{display:none}
         <div class="ev-time">17:00</div>
         <div class="ev-name">🚗 Riconsegna auto <span class="badge">PRENOTATO</span></div>
         <div class="ev-desc">Sicily By Car · Aeroporto PNL · Controlla carburante!</div>
+        <div class="ev-quick"><a class="ev-map-link" href="https://www.google.com/maps/search/Aeroporto+di+Pantelleria" target="_blank">📍 Apri in Maps</a></div>
       </div>
     </div>
 
@@ -657,6 +658,7 @@ body.fulltext .cat-filters{display:none}
         <div class="ev-time">18:20 – 19:00</div>
         <div class="ev-name">✈️ Pantelleria → Trapani <span class="badge">PRENOTATO</span></div>
         <div class="ev-desc">DX1836 · DAT Airlines · 40min · Arriva 1h prima</div>
+        <div class="ev-quick"><a class="ev-map-link" href="https://www.google.com/maps/search/Aeroporto+di+Pantelleria" target="_blank">📍 Apri in Maps</a></div>
         <div class="ev-expand">
           <div class="ev-detail">🎫 Ref: YYA3VX · 3 pax<br>🧳 1×8kg + 1×23kg<br>💡 Arrivederci, Perla Nera! 🖤</div>
         </div>
