@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Pantelleria 2026</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+:root{
+  --bg:#f8f9fb;--card:#ffffff;--text:#1a1a2e;--text2:#5a5a7a;--text3:#9a9ab0;
+  --accent:#2563eb;--orange:#e8590c;--green:#059669;--purple:#7c3aed;--teal:#0891b2;--red:#dc2626;
+  --border:#ebebf0;--shadow:0 2px 8px rgba(0,0,0,0.06);--shadow-md:0 4px 16px rgba(0,0,0,0.08);
+  --r:16px;--r-sm:12px;
+  --font:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display',system-ui,sans-serif;
+}
+@media(prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f0f1a;--card:#1c1c2e;--text:#eaeaf0;--text2:#a0a0b8;--text3:#666680;
+    --border:#2a2a3e;--shadow:0 2px 8px rgba(0,0,0,0.2);--shadow-md:0 4px 16px rgba(0,0,0,0.3);
+  }
+}
+[data-theme="dark"]{
+  --bg:#0f0f1a;--card:#1c1c2e;--text:#eaeaf0;--text2:#a0a0b8;--text3:#666680;
+  --border:#2a2a3e;--shadow:0 2px 8px rgba(0,0,0,0.2);--shadow-md:0 4px 16px rgba(0,0,0,0.3);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.55;-webkit-tap-highlight-color:transparent;padding-bottom:80px}
+button{font-family:var(--font);cursor:pointer;border:none;background:none}
+a{color:var(--accent);text-decoration:none}
+
+/* ═══ TOP BAR ═══ */
+.topbar{position:sticky;top:0;z-index:100;background:var(--card);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;gap:12px;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);background:rgba(255,255,255,0.85)}
+[data-theme="dark"] .topbar{background:rgba(15,15,26,0.85)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .topbar{background:rgba(15,15,26,0.85)}}
+.topbar-title{flex:1}
+.topbar-title h1{font-size:17px;font-weight:700}
+.topbar-title span{font-size:12px;color:var(--text3)}
+.topbar-btn{width:36px;height:36px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:16px}
+.topbar-btn:active{transform:scale(0.9)}
+
+/* ═══ MAP SECTION ═══ */
+.map-section{position:relative;overflow:hidden;transition:height .35s cubic-bezier(.4,0,.2,1);height:200px}
+.map-section.expanded{height:50vh}
+.map-section.hidden{height:0}
+#map{width:100%;height:100%}
+.map-expand{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);background:var(--card);padding:6px 14px;border-radius:20px;font-size:11px;font-weight:600;color:var(--text2);box-shadow:var(--shadow-md);z-index:500;display:flex;align-items:center;gap:4px}
+.map-expand:active{transform:translateX(-50%) scale(0.95)}
+.map-gps{position:absolute;top:10px;right:10px;background:var(--card);width:36px;height:36px;border-radius:50%;box-shadow:var(--shadow-md);display:flex;align-items:center;justify-content:center;font-size:16px;z-index:500}
+.map-gps.active{background:var(--accent);color:#fff}
+
+/* ═══ DAY TABS ═══ */
+.day-tabs{position:sticky;top:61px;z-index:90;background:var(--card);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.day-tabs::-webkit-scrollbar{display:none}
+.tab{padding:8px 16px;border-radius:24px;font-size:13px;font-weight:600;color:var(--text2);background:var(--bg);white-space:nowrap;transition:all .2s;border:1.5px solid transparent}
+.tab:active{transform:scale(0.95)}
+.tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.tab.d1.active{background:#2563eb}
+.tab.d2.active{background:#0891b2}
+.tab.d3.active{background:#e8590c}
+.tab.d4.active{background:#7c3aed}
+
+/* ═══ CONTENT ═══ */
+.content{max-width:680px;margin:0 auto;padding:16px}
+
+/* ═══ INFO CARD ═══ */
+.info-card{background:var(--card);border-radius:var(--r);padding:18px;margin-bottom:16px;box-shadow:var(--shadow)}
+.info-card h2{font-size:15px;font-weight:700;margin-bottom:10px}
+.info-card p{font-size:13px;color:var(--text2);margin-bottom:6px;line-height:1.6}
+.info-card strong{color:var(--text)}
+
+/* ═══ DAY SECTION ═══ */
+.day-section{margin-bottom:28px;scroll-margin-top:120px}
+
+.day-header-card{background:var(--card);border-radius:var(--r);padding:18px;margin-bottom:12px;box-shadow:var(--shadow);display:flex;align-items:center;gap:14px}
+.day-badge{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:800;flex-shrink:0}
+.day-header-text h2{font-size:16px;font-weight:700}
+.day-header-text p{font-size:12px;color:var(--text3);margin-top:2px}
+
+/* ═══ TIMELINE ═══ */
+.timeline{padding-left:20px;border-left:2px solid var(--border);margin-left:21px}
+
+/* ═══ EVENT CARD ═══ */
+.ev{position:relative;margin-bottom:12px;margin-left:12px}
+.ev::before{content:'';position:absolute;left:-21px;top:18px;width:12px;height:12px;border-radius:50%;background:var(--accent);border:3px solid var(--bg);z-index:1}
+.ev.food::before{background:#e8590c}
+.ev.transport::before{background:#64748b}
+.ev.beach::before{background:#0891b2}
+.ev.wine::before{background:#7c3aed}
+.ev.aperitivo::before{background:#f59e0b}
+.ev.flight::before{background:#dc2626}
+.ev.hotel::before{background:#6366f1}
+.ev.done::before{background:var(--green)}
+.ev.done .ev-card{opacity:0.5}
+
+.ev-card{background:var(--card);border-radius:var(--r-sm);padding:16px;box-shadow:var(--shadow);transition:transform .15s,box-shadow .15s;position:relative;overflow:hidden}
+.ev-card:active{transform:scale(0.98)}
+.ev-card.booked{border-left:3px solid var(--red)}
+
+.ev-time{font-size:12px;font-weight:700;color:var(--accent);letter-spacing:0.2px}
+.ev-name{font-size:15px;font-weight:600;margin-top:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ev-desc{font-size:13px;color:var(--text2);margin-top:5px;line-height:1.5}
+.badge{display:inline-flex;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.3px;color:#fff;background:var(--red)}
+
+/* Expand */
+.ev-expand{max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s ease}
+.ev.open .ev-expand{max-height:500px;padding-top:12px}
+.ev-detail{background:var(--bg);border-radius:var(--r-sm);padding:14px;font-size:12.5px;color:var(--text2);line-height:1.8;margin-top:8px}
+.ev-actions{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
+.ev-action{display:inline-flex;align-items:center;gap:4px;padding:8px 12px;border-radius:8px;background:var(--bg);font-size:12px;font-weight:600;color:var(--accent);border:1px solid var(--border)}
+.ev-action:active{transform:scale(0.95);background:var(--accent);color:#fff}
+.ev-done-btn{color:var(--green);border-color:var(--green)}
+.ev-done-btn:active{background:var(--green)}
+
+/* Chevron */
+.ev-chevron{position:absolute;right:16px;top:16px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:10px;transition:transform .3s}
+.ev.open .ev-chevron{transform:rotate(180deg)}
+
+/* ═══ SPECIAL BOXES ═══ */
+.flight-box .ev-card{background:linear-gradient(135deg,#fef2f2,#fee2e2);border-left:3px solid #dc2626}
+[data-theme="dark"] .flight-box .ev-card{background:linear-gradient(135deg,#1a1015,#2a1520)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .flight-box .ev-card{background:linear-gradient(135deg,#1a1015,#2a1520)}}
+.yacht-box .ev-card{background:linear-gradient(135deg,#eff6ff,#dbeafe);border-left:3px solid #2563eb}
+[data-theme="dark"] .yacht-box .ev-card{background:linear-gradient(135deg,#101828,#152240)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .yacht-box .ev-card{background:linear-gradient(135deg,#101828,#152240)}}
+
+/* ═══ ALT FORK ═══ */
+.alt{background:var(--card);border:2px dashed #fbbf24;border-radius:var(--r);padding:16px;margin-bottom:12px;margin-left:12px;position:relative}
+.alt-label{position:absolute;top:-10px;left:14px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;padding:3px 10px;border-radius:8px;font-size:10px;font-weight:700}
+.alt-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+@media(max-width:500px){.alt-grid{grid-template-columns:1fr}}
+.alt-opt{border-radius:var(--r-sm);padding:14px;background:var(--bg);border:1.5px solid var(--border);transition:border-color .2s}
+.alt-opt:active{border-color:var(--accent)}
+.alt-opt h4{font-size:13px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.alt-opt p{font-size:12px;color:var(--text2);line-height:1.4}
+.alt-opt .note{font-size:11px;color:var(--text3);margin-top:6px;font-style:italic}
+.alt-dot{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0}
+.alt-opt:first-child .alt-dot{background:var(--accent)}
+.alt-opt:last-child .alt-dot{background:var(--orange)}
+
+/* ═══ TIP ═══ */
+.tip{background:linear-gradient(135deg,#fefce8,#fef3c7);border:1px solid #fde047;border-radius:var(--r-sm);padding:14px;margin-bottom:12px;margin-left:12px;font-size:12.5px;color:#92400e;line-height:1.5}
+[data-theme="dark"] .tip{background:linear-gradient(135deg,#1a1a0a,#2a2510);color:#fde047;border-color:#854d0e}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .tip{background:linear-gradient(135deg,#1a1a0a,#2a2510);color:#fde047;border-color:#854d0e}}
+
+/* ═══ HOTEL ═══ */
+.hotel-bar{background:var(--card);border-radius:var(--r-sm);padding:14px 16px;margin-top:8px;margin-left:12px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow);cursor:pointer}
+.hotel-bar:active{transform:scale(0.98)}
+.hotel-bar .h-name{flex:1;font-size:13px;font-weight:600}
+.hotel-bar .h-chevron{font-size:10px;color:var(--text3);transition:transform .3s}
+.hotel-bar.open .h-chevron{transform:rotate(180deg)}
+.hotel-detail{max-height:0;overflow:hidden;transition:max-height .3s ease;margin-left:12px}
+.hotel-bar.open+.hotel-detail{max-height:200px}
+.hotel-detail-inner{background:var(--card);border-radius:0 0 var(--r-sm) var(--r-sm);padding:14px 16px;font-size:12.5px;color:var(--text2);line-height:1.7;box-shadow:var(--shadow);margin-top:-4px}
+
+/* ═══ MAP MARKERS ═══ */
+.emark{width:30px;height:30px;border-radius:50%;border:2.5px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.25);display:flex;align-items:center;justify-content:center;font-size:15px;transition:transform .2s}
+.emark.planned{border-color:#1a1a2e;border-width:3px}
+
+/* ═══ COUNTDOWN ═══ */
+.countdown-card{background:linear-gradient(135deg,#1e293b,#0f172a);color:#fff;border-radius:var(--r);padding:20px;margin-bottom:16px;text-align:center;box-shadow:var(--shadow-md)}
+.countdown-card .days{font-size:36px;font-weight:800}
+.countdown-card .label{font-size:12px;opacity:0.7;margin-top:4px}
+.countdown-card .sub{font-size:13px;margin-top:8px;opacity:0.85}
+
+/* ═══ ANIMATIONS ═══ */
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.day-section{animation:fadeIn .4s ease both}
+.day-section:nth-child(2){animation-delay:.05s}
+.day-section:nth-child(3){animation-delay:.1s}
+.day-section:nth-child(4){animation-delay:.15s}
+
+/* ═══ DESKTOP ═══ */
+@media(min-width:768px){
+  .map-section{position:fixed;top:61px;right:0;width:45%;height:calc(100vh - 61px);z-index:50}
+  .map-section.hidden{width:0}
+  .map-expand{display:none}
+  .day-tabs{max-width:55%;position:sticky;top:61px}
+  .content{max-width:55%;padding-right:24px}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-title">
+    <h1>🏝️ Pantelleria</h1>
+    <span id="countdown-mini"></span>
+  </div>
+  <button class="topbar-btn" onclick="toggleTheme()">🌙</button>
+</div>
+
+<!-- MAP -->
+<div class="map-section" id="mapSection">
+  <div id="map"></div>
+  <button class="map-expand" id="mapToggle" onclick="toggleMap()"><span id="mapIcon">▼</span> Mappa</button>
+  <button class="map-gps" id="gpsBtn" onclick="toggleGPS()">📍</button>
+</div>
+
+<!-- DAY TABS -->
+<div class="day-tabs" id="dayTabs">
+  <button class="tab active" onclick="showDay('all',this)">Tutti</button>
+  <button class="tab d1" onclick="showDay(1,this)">G1 ✈️ Arrivo</button>
+  <button class="tab d2" onclick="showDay(2,this)">G2 🌋 Nord</button>
+  <button class="tab d3" onclick="showDay(3,this)">G3 ⛵ Yacht</button>
+  <button class="tab d4" onclick="showDay(4,this)">G4 🌅 Partenza</button>
+</div>
+
+<!-- CONTENT -->
+<div class="content" id="content">
+
+<!-- COUNTDOWN -->
+<div class="countdown-card" id="countdownCard">
+  <div class="days" id="countdownDays">—</div>
+  <div class="label">giorni alla partenza</div>
+  <div class="sub">✈️ 13 Agosto 2026 · I Magnifici 7</div>
+</div>
+
+<!-- INFO -->
+<div class="info-card" id="infoCard">
+  <h2>📋 Da sapere</h2>
+  <p>🚗 <strong>Auto a noleggio indispensabile</strong> — niente bus. Da un capo all'altro: 30 min.</p>
+  <p>📞 <strong>Prenota TUTTO</strong> — ristoranti 2-3 giorni prima. Molti solo telefono/WhatsApp.</p>
+  <p>👟 <strong>Scarpette da scoglio</strong> — zero spiagge di sabbia. Solo roccia vulcanica.</p>
+  <p>🤿 <strong>Maschera + boccaglio</strong> — fondali incredibili ovunque.</p>
+</div>
+
+<!-- DAY 1 -->
+<div class="day-section" data-day="1" id="day1">
+  <div class="day-header-card">
+    <div class="day-badge" style="background:#2563eb">1</div>
+    <div class="day-header-text">
+      <h2>✈️ Arrivo & Costa Est</h2>
+      <p>Mer 13 Agosto · 🌅 06:29 – 🌇 20:01 · 🌡️ 23-29°C</p>
+    </div>
+  </div>
+  <div class="timeline">
+
+    <div class="ev flight flight-box" data-lat="36.8165" data-lng="11.9686">
+      <div class="ev-card booked"><div class="ev-chevron">▼</div>
+        <div class="ev-time">08:10 – 08:50</div>
+        <div class="ev-name">✈️ Trapani → Pantelleria <span class="badge">PRENOTATO</span></div>
+        <div class="ev-desc">DX1831 · DAT Airlines · 40min · 3 pax</div>
+        <div class="ev-expand">
+          <div class="ev-detail">🎫 Ref: YYA3VX · Maccarrone, Prinzivalli, Alagna<br>🧳 1×8kg mano + 1×23kg stiva<br>📱 Check-in online 22h prima<br>💰 €234.72 pagato</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ev transport" data-lat="36.8165" data-lng="11.9686">
+      <div class="ev-card booked"><div class="ev-chevron">▼</div>
+        <div class="ev-time">09:00</div>
+        <div class="ev-name">🚗 Ritiro auto — Sicily By Car <span class="badge">PRENOTATO</span></div>
+        <div class="ev-desc">Citroën C3 · Km illimitati · Riconsegna 16/08 ore 18:00</div>
+        <div class="ev-expand">
+          <div class="ev-detail">📍 Via Madonna della Margana, PNL<br>📞 +39 0923 912940<br>🎫 Ref: 757392604 · IT588008819<br>💳 Deposito €200 · Franchigia €1.464<br>⛽ Restituire stesso livello</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ev hotel" data-lat="36.7872" data-lng="12.0487">
+      <div class="ev-card"><div class="ev-chevron">▼</div>
+        <div class="ev-time">09:30</div>
+        <div class="ev-name">🏠 Check-in Dammuso</div>
+        <div class="ev-desc">Contrada Khamma 109 · Villa 3 camere vista mare · ~15min aeroporto</div>
+        <div class="ev-expand">
+          <div class="ev-detail">📞 +39 0923 915585<br>🏠 3 camere · 7 ospiti · A/C, cucina, BBQ, patio<br>💰 €1.975,05 (Booking.com)<br>💡 Dammuso: muri pietra lavica con cupola</div>
+          <div class="ev-actions">
+            <a class="ev-action" href="https://www.google.com/maps/search/Dammuso+Arco+Elefante+Pantelleria" target="_blank">📍 Maps</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ev beach" data-lat="36.7990" data-lng="12.0470">
+      <div class="ev-card"><div class="ev-chevron">▼</div>
+        <div class="ev-time">10:30 – 12:30</div>
+        <div class="ev-name">🌊 Cala Levante + Arco dell'Elefante</div>
+        <div class="ev-desc">Primo tuffo! Snorkeling eccellente, vista sull'Arco iconico di Pantelleria</div>
+        <div class="ev-expand">
+          <div class="ev-detail">🐘 L'Arco dell'Elefante visibile dalla baia<br>👟 Scarpette obbligatorie<br>🏊 Fondali bassi → profondi<br>💡 A pochi minuti dal dammuso!</div>
+          <div class="ev-actions">
+            <a class="ev-action" href="https://www.google.com/maps/search/Cala+Levante+Pantelleria" target="_blank">📍 Maps</a>
+            <button class="ev-action ev-done-btn" onclick="markDone(event)">✓ Fatto</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ev food" data-lat="36.7985" data-lng="12.0490">
+      <div class="ev-card"><div class="ev-chevron">▼</div>
+        <div class="ev-time">13:00 – 14:30</div>
+        <div class="ev-name">🍽️ Pranzo — Le Cale</div>
+        <div class="ev-desc">Terrazza vista Cala Levante · Pesce fresco, capperi e bottarga</div>
+        <div class="ev-expand">
+          <div class="ev-detail">📍 Contrada Cala Levante 34<br>💰 €€-€€€ · ~€30-40/persona<br>🐟 Prenota tavolo fronte mare<br>💡 Stessi proprietari di Sesiventi</div>
+          <div class="ev-actions">
+            <a class="ev-action" href="https://www.google.com/maps/search/Le+Cale+Pantelleria" target="_blank">📍 Maps</a>
+            <button class="ev-action ev-done-btn" onclick="markDone(event)">✓ Fatto</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ev beach" data-lat="36.8121" data-lng="12.0251">
+      <div class="ev-card"><div class="ev-chevron">▼</div>
+        <div class="ev-time">15:00 – 17:00</div>
+        <div class="ev-name">♨️ Cala Gadir — Terme naturali</div>
+        <div class="ev-desc">Vasche 35-40°C in roccia vulcanica · Gratuite 24/7 · Perfetto nel pomeriggio</div>
+        <div class="ev-expand">
+          <div class="ev-detail">👟 Rocce scivolose — scarpette!<br>💡 Meno gente nel tardo pomeriggio, luce magica</div>
+          <div class="ev-actions">
+            <a class="ev-action" href="https://www.google.com/maps/search/Cala+Gadir+Pantelleria" target="_blank">📍 Maps</a>
+            <button class="ev-action ev-done-btn" onclick="markDone(event)">✓ Fatto</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ev wine" data-lat="36.7980" data-lng="12.0350">
+      <div class="ev-card booked"><div class="ev-chevron">▼</div>
+        <div class="ev-time">18:30 – 20:00</div>
+        <div class="ev-name">🍇 Donnafugata <span class="badge">PRENOTATO</span></div>
+        <div class="ev-desc">Vigneto Zibibbo UNESCO · Tour + 3 vini + Passito Ben Ryè · €280 pagato</div>
+        <div class="ev-expand">
+          <div class="ev-detail">📍 Contrada Khamma Fuori 6<br>📞 +39 0923 915 649<br>🎫 Ref: 01-P-20260813-D-BK-013<br>👤 Antonio Alagna · 3339182554<br>👥 7 adulti<br>⏰ Arriva 10 min prima · ~1.5h<br>⚠️ Cancellazione: iscritto entro 2gg feriali</div>
+          <div class="ev-actions">
+            <a class="ev-action" href="https://www.google.com/maps/search/Donnafugata+Pantelleria" target="_blank">📍 Maps</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="alt">
+      <div class="alt-label">⚡ CENA</div>
+      <div class="alt-grid">
+        <div class="alt-opt"><h4><span class="alt-dot">A</span> Acquamore</h4><p>Fine dining sul mare · Crudi, pasta ai ricci</p><div class="note">📍 Cala Tramontana · €€€</div></div>
+        <div class="alt-opt"><h4><span class="alt-dot">B</span> Il Principe e il Pirata</h4><p>#1 dell'isola · Michelin Guide · Couscous</p><div class="note">📍 Punta Karace · €€€ · Prenota 5gg prima!</div></div>
+      </div>
+    </div>
+
+    <div class="hotel-bar" onclick="this.classList.toggle('open')">
+      <span>🏨</span><span class="h-name">Dammuso Arco dell'Elefante</span><span class="h-chevron">▼</span>
+    </div>
+    <div class="hotel-detail"><div class="hotel-detail-inner">📍 Contrada Khamma, 109 · 📞 +39 0923 915585<br>🏠 3 camere · Vista mare · A/C, cucina, BBQ<br>💰 €1.975,05 · Dammuso in pietra lavica</div></div>
+
+  </div>
+</div>
+
+<!-- DAY 2 -->
+<div class="day-section" data-day="2" id="day2">
+  <div class="day-header-card">
+    <div class="day-badge" style="background:#0891b2">2</div>
+    <div class="day-header-text">
+      <h2>🌋 Nord-Ovest & Sesiventi Night</h2>
+      <p>Gio 14 Agosto · 🌅 06:30 – 🌇 20:00 · 🌡️ 23-29°C</p>
+    </div>
+  </div>
+  <div class="timeline">
+
+    <div class="tip"><strong>📐 Logistica:</strong> Costa NORD-OVEST. Rientro dammuso entro 16:00 → docce 7 persone (1.5h) → Sesiventi ore 19:00 (Mursia, ~20 min dal dammuso).</div>
+
+    <div class="ev sight" data-lat="36.8158" data-lng="11.9868">
+      <div class="ev-card"><div class="ev-chevron">▼</div>
+        <div class="ev-time">07:30 – 10:00</div>
+        <div class="ev-name">🌋 Specchio di Venere + Fanghi</div>
+        <div class="ev-desc">Vai PRESTO! Lago vulcanico + fanghi sulla riva sud. Gratuito</div>
+        <div class="ev-expand">
+          <div class="ev-detail">♨️ Acqua ~40°C · 🧖 Fanghi: spalma + secca al sole<br>⏰ Entro le 8! Poi affollatissimo<br>💡 Zero ombra! Porta acqua + crema solare</div>
+          <div class="ev-actions">
+            <a class="ev-action" href="https://www.google.com/maps/search/Specchio+di+Venere+Pantelleria" target="_blank">📍 Maps</a>
+            <button class="ev-action ev-done-btn" onclick="markDone(event)">✓ Fatto</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ev sight" data-lat="36.8080" data-lng="11.9317">
+      <div class="ev-card"><div class="ev-chevron">▼</div>
+        <div class="ev-time">10:15 – 11:00</div>
+        <div class="ev-name">🏰 Sesi di Mursia</div>
+        <div class="ev-desc">Tombe megalitiche Età del Bronzo · 50+ monumenti · Gratuito</div>
+        <div class="ev-expand">
+          <div class="ev-detail">🏛️ Uniche nel Mediterraneo · ⏱️ ~30-45 min<br>💡 Sesiventi è vicino — ricognizione per stasera!</div>
+          <div class="ev-actions">
+            <a class="ev-action" href="https://www.google.com/maps/search/Sesi+di+Mursia+Pantelleria" target="_blank">📍 Maps</a>
+            <button class="ev-action ev-done-btn" onclick="markDone(event)">✓ Fatto</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="alt">
+      <div class="alt-label">⚡ PRANZO</div>
+      <div class="alt-grid">
+        <div class="alt-opt"><h4><span class="alt-dot">A</span> Agriturismo Zinedi</h4><p>Vista Specchio di Venere · Giardino, piscina</p><div class="note">📍 Nord · €€ · Prenota</div></div>
+        <div class="alt-opt"><h4><span class="alt-dot">B</span> Cicci's Beach</h4><p>Beach bar Bue Marino · Pranzo leggero → tuffo</p><div class="note">📍 Costa ovest · €€</div></div>
+      </div>
+    </div>
+
+    <div class="alt">
+      <div class="alt-label">⚡ POMERIGGIO</div>
+      <div class="alt-grid">
+        <div class="alt-opt"><h4><span class="alt-dot">A</span> Satarìa + Bue Marino</h4><p>Grotta termale 40°C (Ulisse!) + grotta marina</p><div class="note">📍 Ovest · Porta torcia!</div></div>
+        <div class="alt-opt"><h4><span class="alt-dot">B</span> Bue Marino + Cinque Denti</h4><p>Grotta smeraldo + rocce spettacolari</p><div class="note">📍 Ovest/Sud · Maschera!</div></div>
+      </div>
+    </div>
+
+    <div class="ev transport">
+      <div class="ev-card">
+        <div class="ev-time">15:30</div>
+        <div class="ev-name">🚗 Rientro + 🚿 Docce</div>
+        <div class="ev-desc">~20 min dalla costa ovest. 7 persone = preparatevi per Sesiventi! Eleganti!</div>
+      </div>
+    </div>
+
+    <div class="ev aperitivo yacht-box" data-lat="36.8050" data-lng="11.9350">
+      <div class="ev-card booked"><div class="ev-chevron">▼</div>
+        <div class="ev-time">19:00 – tardi</div>
+        <div class="ev-name">🥂 Sesiventi — Rooftop + DJ + DISCO <span class="badge">PRENOTATO</span></div>
+        <div class="ev-desc">€40/pers · Drink + piatto (porzioni ENORMI = è la vostra cena!)</div>
+        <div class="ev-expand">
+          <div class="ev-detail">📍 Mursia, Altopiano dei Sesi<br>📞 +39 350 528 2450<br>🍾 Spumante + cocktail premium<br>🍽️ Polpette, tartare, fritto, tapas<br>👟 Scarpe giù sul rooftop · 👔 Dress code elegante<br>🎵 DJ tramonto → DISCO NIGHT<br>🌙 Si resta qui tutta sera!<br>💡 Fame tardi? Altamarea fino alle 7:00</div>
+          <div class="ev-actions">
+            <a class="ev-action" href="https://www.google.com/maps/search/Sesiventi+Pantelleria" target="_blank">📍 Maps</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hotel-bar" onclick="this.classList.toggle('open')">
+      <span>🏨</span><span class="h-name">Dammuso Arco dell'Elefante</span><span class="h-chevron">▼</span>
+    </div>
+    <div class="hotel-detail"><div class="hotel-detail-inner">📍 Contrada Khamma, 109 · Rientro a fine serata</div></div>
+
+  </div>
+</div>
+
+<!-- DAY 3 -->
+<div class="day-section" data-day="3" id="day3">
+  <div class="day-header-card">
+    <div class="day-badge" style="background:#e8590c">3</div>
+    <div class="day-header-text">
+      <h2>⛵ Yacht Day & Ferragosto</h2>
+      <p>Ven 15 Agosto (FERRAGOSTO) · 🌅 06:30 – 🌇 19:59 · 🌡️ 23-29°C</p>
+    </div>
+  </div>
+  <div class="timeline">
+
+    <div class="tip"><strong>📐 Logistica:</strong> Yacht 09:30–17:00 (porto Centro). Rientro dammuso 17:15. Docce 17:15–19:00. Cena Da Pina ore 21:30 (~15 min nord).</div>
+
+    <div class="ev sight yacht-box" data-lat="36.8290" data-lng="11.9440">
+      <div class="ev-card booked"><div class="ev-chevron">▼</div>
+        <div class="ev-time">09:00 ⚠️</div>
+        <div class="ev-name">📍 Ritrovo 30 MIN PRIMA <span class="badge">PRENOTATO</span></div>
+        <div class="ev-desc">Lungomare Borsellino 84 · Non perdere il turno!</div>
+        <div class="ev-expand">
+          <div class="ev-detail">⚠️ ORE 09:00 (30 min prima della partenza)<br>📍 Lungomare Paolo Borsellino, 84<br>🚗 Dal dammuso: ~15 min</div>
+          <div class="ev-actions">
+            <a class="ev-action" href="https://www.google.com/maps/search/Lungomare+Borsellino+84+Pantelleria" target="_blank">📍 Maps</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ev sight yacht-box" data-lat="36.785" data-lng="11.985">
+      <div class="ev-card booked"><div class="ev-chevron">▼</div>
+        <div class="ev-time">09:30 – 17:00</div>
+        <div class="ev-name">⛵ Tour Isola in Yacht <span class="badge">PRENOTATO</span></div>
+        <div class="ev-desc">Circumnavigazione completa · Cale, grotte, pranzo a bordo · 7 biglietti</div>
+        <div class="ev-expand">
+          <div class="ev-detail">⛵ Tour con Simone & Luck<br>🎫 GYG7VKVW75Y3 · PIN: 3D7BBQp1<br>👥 7 biglietti · GetYourGuide<br>📞 +39 06 9674 1658 (24/7)<br>⚠️ Cancel gratuita entro 09:30 del 14/08<br><br>🌊 Cale nascoste · Grotte · Arco dal mare · Bolle Nikà · Balata dei Turchi<br>🍝 Pranzo a bordo incluso<br>💡 Porta: costume, crema, asciugamano, maschera</div>
+          <div class="ev-actions">
+            <a class="ev-action" href="https://www.google.com/maps/search/Porto+Pantelleria" target="_blank">📍 Maps</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ev transport">
+      <div class="ev-card">
+        <div class="ev-time">17:00 – 19:00</div>
+        <div class="ev-name">🚗 Rientro + 🚿 Docce</div>
+        <div class="ev-desc">Porto → dammuso ~15 min · 1h45 per 7 persone · Vestitevi per uscire!</div>
+      </div>
+    </div>
+
+    <div class="ev food" data-lat="36.8130" data-lng="11.9840">
+      <div class="ev-card booked"><div class="ev-chevron">▼</div>
+        <div class="ev-time">21:30 – 23:00</div>
+        <div class="ev-name">🍽️ Trattoria da Pina <span class="badge">PRENOTATO</span></div>
+        <div class="ev-desc">Ravioli panteschi (ricotta+menta) · Stufato · Travelers' Choice</div>
+        <div class="ev-expand">
+          <div class="ev-detail">📍 Via Lago 34 (nord, vicino Specchio)<br>⏰ Ore 21:30 · 👥 7 persone<br>💰 €€ · ~€25-35/persona<br>💡 Preferito dai locali!</div>
+          <div class="ev-actions">
+            <a class="ev-action" href="https://www.google.com/maps/search/Trattoria+da+Pina+Pantelleria" target="_blank">📍 Maps</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ev aperitivo">
+      <div class="ev-card">
+        <div class="ev-time">23:00 – tardi</div>
+        <div class="ev-name">🎶 Notte di Ferragosto!</div>
+        <div class="ev-desc">Tutta l'isola in strada · Alta Marea (Scauri, fino 7:00) o eventi in piazza</div>
+      </div>
+    </div>
+
+    <div class="hotel-bar" onclick="this.classList.toggle('open')">
+      <span>🏨</span><span class="h-name">Dammuso Arco dell'Elefante</span><span class="h-chevron">▼</span>
+    </div>
+    <div class="hotel-detail"><div class="hotel-detail-inner">📍 Contrada Khamma, 109 · Rientro a fine serata</div></div>
+
+  </div>
+</div>
+
+<!-- DAY 4 -->
+<div class="day-section" data-day="4" id="day4">
+  <div class="day-header-card">
+    <div class="day-badge" style="background:#7c3aed">4</div>
+    <div class="day-header-text">
+      <h2>🌅 Ultimo Tuffo & Partenza</h2>
+      <p>Sab 16 Agosto · 🌅 06:31 – 🌇 19:58 · 🌡️ 23-29°C</p>
+    </div>
+  </div>
+  <div class="timeline">
+
+    <div class="alt">
+      <div class="alt-label">⚡ MATTINA</div>
+      <div class="alt-grid">
+        <div class="alt-opt"><h4><span class="alt-dot">A</span> Laghetto delle Ondine</h4><p>Piscina naturale in roccia · 20min a piedi</p><div class="note">📍 Nord-est · Scarpette!</div></div>
+        <div class="alt-opt"><h4><span class="alt-dot">B</span> Punta Spadillo</h4><p>Faro + sentieri Parco Nazionale + rovine WWII</p><div class="note">📍 Nord-est · Facile</div></div>
+      </div>
+    </div>
+
+    <div class="ev food" data-lat="36.8295" data-lng="11.9425">
+      <div class="ev-card"><div class="ev-chevron">▼</div>
+        <div class="ev-time">10:30 – 11:30</div>
+        <div class="ev-name">🍡 Pasticceria Katia + Panificio Marrone</div>
+        <div class="ev-desc">Granite, baci panteschi, gelato (#1 isola) · Focaccia e cannoli da portare</div>
+        <div class="ev-expand">
+          <div class="ev-detail">📍 Katia: Lungomare Borsellino · ⭐ 4.5/5 (794 rec.)<br>🍡 Bacio pantesco, granita gelsi, pistacchio<br>📍 Marrone: Via Borgo Italia<br>💡 Prendi qualcosa per l'aereo!</div>
+          <div class="ev-actions">
+            <a class="ev-action" href="https://www.google.com/maps/search/Pasticceria+Katia+Pantelleria" target="_blank">📍 Maps</a>
+            <button class="ev-action ev-done-btn" onclick="markDone(event)">✓ Fatto</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="alt">
+      <div class="alt-label">⚡ PRANZO</div>
+      <div class="alt-grid">
+        <div class="alt-opt"><h4><span class="alt-dot">A</span> Dammuso Ristorante</h4><p>Cucina rustica pietra lavica · Caponata, pesce</p><div class="note">📍 Borgo Italia · €€</div></div>
+        <div class="alt-opt"><h4><span class="alt-dot">B</span> Franco Castiglione</h4><p>Pizza + pesce · Travelers' Choice</p><div class="note">📍 Borgo Italia · €€</div></div>
+      </div>
+    </div>
+
+    <div class="ev sight" data-lat="36.8290" data-lng="11.9440">
+      <div class="ev-card"><div class="ev-chevron">▼</div>
+        <div class="ev-time">13:30 – 14:30</div>
+        <div class="ev-name">🛍️ Ultimo shopping — Centro</div>
+        <div class="ev-desc">Castello Barbacane · La Nicchia (capperi) · Caffè Aurora (granite)</div>
+        <div class="ev-expand">
+          <div class="ev-detail">🏰 Castello: fortezza medievale, gratis<br>🛍️ La Nicchia: capperi, conserve top<br>🍷 Passito: Ben Ryè o Coste Ghirlanda<br>☕ Aurora: granite storiche</div>
+          <div class="ev-actions">
+            <a class="ev-action" href="https://www.google.com/maps/search/Castello+Barbacane+Pantelleria" target="_blank">📍 Maps</a>
+            <button class="ev-action ev-done-btn" onclick="markDone(event)">✓ Fatto</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ev transport">
+      <div class="ev-card booked">
+        <div class="ev-time">17:00</div>
+        <div class="ev-name">🚗 Riconsegna auto <span class="badge">PRENOTATO</span></div>
+        <div class="ev-desc">Sicily By Car · Aeroporto PNL · Controlla carburante!</div>
+      </div>
+    </div>
+
+    <div class="ev flight flight-box" data-lat="36.8165" data-lng="11.9686">
+      <div class="ev-card booked"><div class="ev-chevron">▼</div>
+        <div class="ev-time">18:20 – 19:00</div>
+        <div class="ev-name">✈️ Pantelleria → Trapani <span class="badge">PRENOTATO</span></div>
+        <div class="ev-desc">DX1836 · DAT Airlines · 40min · Arriva 1h prima</div>
+        <div class="ev-expand">
+          <div class="ev-detail">🎫 Ref: YYA3VX · 3 pax<br>🧳 1×8kg + 1×23kg<br>💡 Arrivederci, Perla Nera! 🖤</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</div><!-- /content -->
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// TRIP DATA
+// ═══════════════════════════════════════════════════════════════
+var TRIP={departure:"2026-08-13T08:10:00+02:00",center:[36.785,11.985],zoom:12};
+
+var places=[
+  {n:"Specchio di Venere",lat:36.8158,lng:11.9868,cat:"Visite",sub:"Natura"},
+  {n:"Arco dell'Elefante",lat:36.7929,lng:12.0536,cat:"Visite",sub:"Natura"},
+  {n:"Cala Gadir",lat:36.8121,lng:12.0251,cat:"Visite",sub:"Mare"},
+  {n:"Cala Levante",lat:36.799,lng:12.047,cat:"Visite",sub:"Mare"},
+  {n:"Balata dei Turchi",lat:36.7355,lng:12.0226,cat:"Visite",sub:"Mare"},
+  {n:"Bue Marino",lat:36.7536,lng:11.9475,cat:"Visite",sub:"Mare"},
+  {n:"Castello Barbacane",lat:36.829,lng:11.944,cat:"Visite",sub:"Monumento"},
+  {n:"Sesi di Mursia",lat:36.808,lng:11.9317,cat:"Visite",sub:"Monumento"},
+  {n:"Grotta di Satarìa",lat:36.7839,lng:11.9516,cat:"Visite",sub:"Mare"},
+  {n:"Laghetto delle Ondine",lat:36.8244,lng:12.0048,cat:"Visite",sub:"Mare"},
+  {n:"Punta Spadillo",lat:36.8241,lng:12.0122,cat:"Visite",sub:"Natura"},
+  {n:"Il Principe e il Pirata",lat:36.765,lng:12.038,cat:"Cibo",sub:"Ristorante"},
+  {n:"Acquamore",lat:36.7995,lng:12.052,cat:"Cibo",sub:"Ristorante"},
+  {n:"Le Cale",lat:36.7985,lng:12.049,cat:"Cibo",sub:"Ristorante"},
+  {n:"Trattoria da Pina",lat:36.813,lng:11.984,cat:"Cibo",sub:"Trattoria"},
+  {n:"Agriturismo Zinedi",lat:36.805,lng:11.96,cat:"Cibo",sub:"Ristorante"},
+  {n:"Dammuso Ristorante",lat:36.8285,lng:11.943,cat:"Cibo",sub:"Trattoria"},
+  {n:"Franco Castiglione",lat:36.828,lng:11.9428,cat:"Cibo",sub:"Pizzeria"},
+  {n:"Cicci's Beach",lat:36.7545,lng:11.949,cat:"Cibo",sub:"Beach Bar"},
+  {n:"Panificio Marrone",lat:36.8275,lng:11.944,cat:"Cibo",sub:"Panificio"},
+  {n:"Sesiventi",lat:36.805,lng:11.935,cat:"Aperitivo",sub:"Aperitivo Bar"},
+  {n:"Donnafugata",lat:36.798,lng:12.035,cat:"Aperitivo",sub:"Vigneto"},
+  {n:"Pasticceria Katia",lat:36.8295,lng:11.9425,cat:"Dolci",sub:"Pasticceria"},
+  {n:"Dammuso (Hotel)",lat:36.7872,lng:12.0487,cat:"Hotel",sub:"Hotel"}
+];
+
+var dayRoutes=[
+  {day:1,color:"#2563eb",stops:[[36.8165,11.9686],[36.7872,12.0487],[36.799,12.047],[36.8121,12.0251],[36.798,12.035]]},
+  {day:2,color:"#0891b2",stops:[[36.8158,11.9868],[36.808,11.9317],[36.7536,11.9475],[36.805,11.935]]},
+  {day:3,color:"#e8590c",stops:[[36.829,11.944],[36.785,11.985],[36.813,11.984]]},
+  {day:4,color:"#7c3aed",stops:[[36.8244,12.0048],[36.8295,11.9425],[36.829,11.944],[36.8165,11.9686]]}
+];
+
+var plannedDays={
+  "36.8158,11.9868":[2],"36.7929,12.0536":[1],"36.8121,12.0251":[1],
+  "36.799,12.047":[1],"36.7536,11.9475":[2],"36.829,11.944":[4],
+  "36.808,11.9317":[2],"36.805,11.935":[2],"36.798,12.035":[1],
+  "36.7985,12.049":[1],"36.813,11.984":[3],"36.8295,11.9425":[4],
+  "36.8244,12.0048":[4],"36.7872,12.0487":[1,2,3,4]
+};
+
+// ═══════════════════════════════════════════════════════════════
+// MAP
+// ═══════════════════════════════════════════════════════════════
+var catColors={Visite:"#bfdbfe",Cibo:"#fed7aa",Aperitivo:"#fde68a",Dolci:"#fbcfe8",Hotel:"#c4b5fd"};
+var subIcons={Natura:"🌋",Mare:"🌊",Monumento:"🏰",Ristorante:"🍽️",Trattoria:"🍜",Pizzeria:"🍕","Beach Bar":"🏖️",Panificio:"🥖","Aperitivo Bar":"🥂",Vigneto:"🍇",Pasticceria:"🍡",Hotel:"🏨"};
+var map,placeLayer,routeLayer,curDay='all';
+var userLat=null,userLng=null,gpsActive=false,gpsWatchId=null,gpsMarker=null,gpsCircle=null;
+
+function initMap(){
+  map=L.map('map',{zoomControl:false,attributionControl:false}).setView(TRIP.center,TRIP.zoom);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{maxZoom:19}).addTo(map);
+  placeLayer=L.layerGroup().addTo(map);
+  routeLayer=L.layerGroup().addTo(map);
+  renderMap();
+}
+
+function getPlanned(p){
+  var k=Math.round(p.lat*10000)/10000+','+Math.round(p.lng*10000)/10000;
+  return plannedDays[k]||[];
+}
+
+function renderMap(){
+  placeLayer.clearLayers();routeLayer.clearLayers();
+  var vis=[];
+  places.forEach(function(p){
+    var pd=getPlanned(p);
+    if(curDay!=='all'&&pd.indexOf(curDay)===-1)return;
+    var bg=catColors[p.cat]||'#e2e8f0';
+    var ic=subIcons[p.sub]||'📌';
+    var cls='emark'+(pd.length?' planned':'');
+    var icon=L.divIcon({className:cls,html:'<div style="background:'+bg+';width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;">'+ic+'</div>',iconSize:[30,30],iconAnchor:[15,15]});
+    var m=L.marker([p.lat,p.lng],{icon:icon});
+    m.on('click',function(){
+      var h='<div style="font-family:-apple-system,sans-serif"><strong>'+p.n+'</strong><br><span style="font-size:12px;color:#666">'+p.sub+'</span>';
+      if(pd.length)h+='<br><span style="font-size:11px;color:#2563eb;font-weight:600">📅 G'+pd.join(', G')+'</span>';
+      h+='<br><a href="https://www.google.com/maps/search/'+encodeURIComponent(p.n+' Pantelleria')+'" target="_blank" style="font-size:12px">📍 Google Maps</a></div>';
+      m.bindPopup(h,{maxWidth:240}).openPopup();
+    });
+    placeLayer.addLayer(m);vis.push(p);
+  });
+  if(curDay!=='all'){
+    var dr=dayRoutes.find(function(d){return d.day===curDay;});
+    if(dr&&dr.stops.length>1){
+      L.polyline(dr.stops,{color:dr.color,weight:3,opacity:0.7,dashArray:'8,6'}).addTo(routeLayer);
+      dr.stops.forEach(function(s,i){
+        L.marker(s,{icon:L.divIcon({className:'',html:'<div style="background:'+dr.color+';color:#fff;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3)">'+(i+1)+'</div>',iconSize:[20,20],iconAnchor:[10,10]}),interactive:false}).addTo(routeLayer);
+      });
+    }
+  }
+  if(vis.length){map.fitBounds(L.featureGroup(placeLayer.getLayers()).getBounds().pad(0.1));}
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INTERACTIONS
+// ═══════════════════════════════════════════════════════════════
+
+// Day tabs
+function showDay(d,btn){
+  curDay=d;
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+  btn.classList.add('active');
+  document.querySelectorAll('.day-section').forEach(function(s){s.style.display=(d==='all'||s.dataset.day==d)?'':'none';});
+  document.getElementById('countdownCard').style.display=d==='all'?'':'none';
+  document.getElementById('infoCard').style.display=d==='all'?'':'none';
+  renderMap();
+  if(d!=='all'){document.getElementById('day'+d).scrollIntoView({behavior:'smooth',block:'start'});}
+}
+
+// Expand cards
+document.addEventListener('click',function(e){
+  var ev=e.target.closest('.ev');
+  if(!ev||!ev.querySelector('.ev-expand'))return;
+  if(e.target.closest('a')||e.target.closest('.ev-done-btn'))return;
+  ev.classList.toggle('open');
+});
+
+// Mark done
+function markDone(e){
+  e.stopPropagation();
+  var ev=e.target.closest('.ev');
+  if(ev)ev.classList.toggle('done');
+  saveDoneState();
+}
+function saveDoneState(){
+  var done={};
+  document.querySelectorAll('.ev.done').forEach(function(el,i){
+    var id=el.dataset.lat+','+el.dataset.lng+(el.querySelector('.ev-time')?el.querySelector('.ev-time').textContent:'');
+    done[id]=1;
+  });
+  localStorage.setItem('pantelleria_done',JSON.stringify(done));
+}
+function restoreDoneState(){
+  var done=JSON.parse(localStorage.getItem('pantelleria_done')||'{}');
+  document.querySelectorAll('.ev').forEach(function(el){
+    var id=el.dataset.lat+','+el.dataset.lng+(el.querySelector('.ev-time')?el.querySelector('.ev-time').textContent:'');
+    if(done[id])el.classList.add('done');
+  });
+}
+restoreDoneState();
+
+// Map toggle
+var mapExpanded=false;
+function toggleMap(){
+  var s=document.getElementById('mapSection');
+  mapExpanded=!mapExpanded;
+  s.classList.toggle('expanded',mapExpanded);
+  document.getElementById('mapIcon').textContent=mapExpanded?'▲':'▼';
+  setTimeout(function(){map.invalidateSize();},400);
+}
+
+// GPS
+function toggleGPS(){
+  var btn=document.getElementById('gpsBtn');
+  if(gpsActive){
+    if(gpsWatchId)navigator.geolocation.clearWatch(gpsWatchId);
+    if(gpsMarker)map.removeLayer(gpsMarker);
+    if(gpsCircle)map.removeLayer(gpsCircle);
+    gpsMarker=null;gpsCircle=null;gpsActive=false;userLat=null;userLng=null;
+    btn.classList.remove('active');return;
+  }
+  if(!navigator.geolocation){alert('GPS non supportato');return;}
+  gpsActive=true;btn.classList.add('active');
+  gpsWatchId=navigator.geolocation.watchPosition(function(pos){
+    userLat=pos.coords.latitude;userLng=pos.coords.longitude;
+    if(gpsMarker){gpsMarker.setLatLng([userLat,userLng]);gpsCircle.setLatLng([userLat,userLng]).setRadius(pos.coords.accuracy);}
+    else{
+      gpsMarker=L.circleMarker([userLat,userLng],{radius:8,fillColor:'#2563eb',fillOpacity:1,color:'#fff',weight:3}).addTo(map);
+      gpsCircle=L.circle([userLat,userLng],{radius:pos.coords.accuracy,fillColor:'#2563eb',fillOpacity:0.08,color:'#2563eb',weight:1}).addTo(map);
+      map.setView([userLat,userLng],14);
+    }
+  },function(){gpsActive=false;btn.classList.remove('active');alert('📍 Posizione non disponibile');},
+  {enableHighAccuracy:true,maximumAge:10000,timeout:15000});
+}
+
+// Theme
+function toggleTheme(){
+  var r=document.documentElement;
+  var cur=r.getAttribute('data-theme');
+  r.setAttribute('data-theme',cur==='dark'?'light':'dark');
+  document.querySelector('.topbar-btn').textContent=cur==='dark'?'🌙':'☀️';
+}
+
+// Countdown
+function updateCountdown(){
+  var t=new Date(TRIP.departure)-new Date();
+  if(t<=0){document.getElementById('countdownDays').textContent='🎉';document.getElementById('countdown-mini').textContent='Siamo a Pantelleria!';return;}
+  var d=Math.floor(t/864e5);
+  document.getElementById('countdownDays').textContent=d;
+  document.getElementById('countdown-mini').textContent='✈️ tra '+d+' giorni';
+  setTimeout(updateCountdown,60000);
+}
+
+// Init
+initMap();
+updateCountdown();
+</script>
+</body>
+</html>
