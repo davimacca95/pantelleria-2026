@@ -107,8 +107,8 @@ a{color:var(--accent);text-decoration:none}
 .badge{display:inline-flex;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.3px;color:#fff;background:var(--red)}
 
 /* Expand */
-.ev-expand{max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s ease}
-.ev.open .ev-expand{max-height:500px;padding-top:12px}
+.ev-expand{display:none;padding-top:12px}
+.ev.open .ev-expand{display:block}
 .ev-detail{background:var(--bg);border-radius:var(--r-sm);padding:14px;font-size:12.5px;color:var(--text2);line-height:1.8;margin-top:8px}
 .ev-actions{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
 .ev-action{display:inline-flex;align-items:center;gap:4px;padding:8px 12px;border-radius:8px;background:var(--bg);font-size:12px;font-weight:600;color:var(--accent);border:1px solid var(--border)}
@@ -722,7 +722,23 @@ document.addEventListener('click',function(e){
   var ev=e.target.closest('.ev');
   if(!ev||!ev.querySelector('.ev-expand'))return;
   if(e.target.closest('a')||e.target.closest('.ev-done-btn'))return;
+  // Close other open cards
+  document.querySelectorAll('.ev.open').forEach(function(other){
+    if(other!==ev)other.classList.remove('open');
+  });
   ev.classList.toggle('open');
+  // If opening and has coordinates, expand map and fly there
+  if(ev.classList.contains('open')&&ev.dataset.lat&&ev.dataset.lng){
+    var lat=parseFloat(ev.dataset.lat),lng=parseFloat(ev.dataset.lng);
+    var ms=document.getElementById('mapSection');
+    if(!ms.classList.contains('expanded')){
+      ms.classList.add('expanded');
+      document.getElementById('mapIcon').textContent='▲';
+      setTimeout(function(){map.invalidateSize();map.flyTo([lat,lng],15,{duration:0.6});},400);
+    }else{
+      map.flyTo([lat,lng],15,{duration:0.6});
+    }
+  }
 });
 
 // Mark done
