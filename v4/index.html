@@ -277,7 +277,10 @@ body.fulltext .cat-filters{display:none}
   <button class="cfilter" onclick="filterCat('Mare',this)">🌊 Mare</button>
   <button class="cfilter" onclick="filterCat('Ristorante',this)">🍽️ Ristoranti</button>
   <button class="cfilter" onclick="filterCat('Aperitivo',this)">🥂 Aperitivo</button>
-  <button class="cfilter" onclick="filterCat('Dolci',this)">🍡 Dolci</button>
+  <button class="cfilter" onclick="filterCat('Dolci',this)">🧁 Dolci</button>
+  <button class="cfilter" onclick="filterCat('Terme',this)">♨️ Terme</button>
+  <button class="cfilter" onclick="filterCat('Sentiero',this)">🥾 Sentieri</button>
+  <button class="cfilter" onclick="filterCat('Vigneto',this)">🍇 Cantine</button>
   <button class="cfilter" onclick="filterCat('Natura',this)">🌋 Natura</button>
   <button class="cfilter" onclick="filterCat('Monumento',this)">🏰 Monumenti</button>
 </div>
@@ -596,10 +599,10 @@ body.fulltext .cat-filters{display:none}
     <div class="ev food" data-lat="36.8295" data-lng="11.9425">
       <div class="ev-card"><div class="ev-tools"><a class="ev-map-icon" href="https://www.google.com/maps/search/Pasticceria+Katia+Pantelleria" target="_blank" title="Apri in Maps" onclick="event.stopPropagation()">📍</a><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button><span class="ev-chevron">▼</span></div>
         <div class="ev-time">10:30 – 11:30</div>
-        <div class="ev-name">🍡 Pasticceria Katia + Panificio Marrone</div>
+        <div class="ev-name">🍨 Pasticceria Katia + Panificio Marrone</div>
         <div class="ev-desc">Granite, baci panteschi, gelato (#1 isola) · Focaccia e cannoli da portare</div>
         <div class="ev-expand">
-          <div class="ev-detail">📍 Katia: Lungomare Borsellino · ⭐ 4.5/5 (794 rec.)<br>🍡 Bacio pantesco, granita gelsi, pistacchio<br>📍 Marrone: Via Borgo Italia<br>💡 Prendi qualcosa per l'aereo!</div>
+          <div class="ev-detail">📍 Katia: Lungomare Borsellino · ⭐ 4.5/5 (794 rec.)<br>🧁 Bacio pantesco, granita gelsi, pistacchio<br>📍 Marrone: Via Borgo Italia<br>💡 Prendi qualcosa per l'aereo!</div>
           
         </div>
       </div>
@@ -679,7 +682,36 @@ var places=[
   {n:"Sesiventi",lat:36.805,lng:11.935,cat:"Aperitivo",sub:"Aperitivo Bar"},
   {n:"Donnafugata",lat:36.798,lng:12.035,cat:"Aperitivo",sub:"Vigneto"},
   {n:"Pasticceria Katia",lat:36.8295,lng:11.9425,cat:"Dolci",sub:"Pasticceria"},
-  {n:"Dammuso (Hotel)",lat:36.7872,lng:12.0487,cat:"Hotel",sub:"Hotel"}
+  {n:"Dammuso (Hotel)",lat:36.7872,lng:12.0487,cat:"Hotel",sub:"Hotel"},
+  {n:"Cala Cottone",lat:36.8192,lng:12.0174,cat:"Visite",sub:"Mare",d:"Caletta nascosta tra le rocce, si intravede dal sentiero del Khaggiar"},
+  {n:"Martingana",lat:36.7495,lng:12.0456,cat:"Visite",sub:"Mare",d:"Porticciolo selvaggio tra Balata dei Turchi e l’Arco, fondali splendidi"},
+  {n:"Punta Li Marsi",lat:36.7397,lng:12.0321,cat:"Visite",sub:"Mare",d:"Lastra di roccia che scende nel turchese, accanto alla Grotta delle Sirene"},
+  {n:"Cala di Nikà",lat:36.7449,lng:11.985,cat:"Visite",sub:"Terme",d:"Acqua termale che sgorga in mare: la temperatura cambia mentre nuoti"},
+  {n:"Grotta di Benikulà (Sauna)",lat:36.7814,lng:11.9795,cat:"Visite",sub:"Terme",d:"Sauna naturale nella roccia: vapore a 40°C. Posizione approssimativa"},
+  {n:"Favara Grande (fumarole)",lat:36.7675,lng:12.0013,cat:"Visite",sub:"Natura",d:"Campo di fumarole: vapore che esce dalle fessure della roccia"},
+  {n:"Punta Fram",lat:36.8031,lng:11.9266,cat:"Visite",sub:"Mare",d:"Promontorio di lava nera sulla costa ovest, perfetto per il tramonto"},
+  {n:"Faraglione di Tracino",lat:36.7989,lng:12.0521,cat:"Visite",sub:"Mare",d:"Grande faraglione che chiude Cala Levante, sotto il borgo di Tracino"},
+  {n:"Monte Gibele",lat:36.7762,lng:12.0119,cat:"Visite",sub:"Sentiero",d:"Secondo vulcano dell’isola. Sentiero 977 CHIUSO: sali dall’anello 971"},
+  {n:"Grotta dei Briganti",lat:36.7776,lng:12.0033,cat:"Visite",sub:"Sentiero",d:"Cavità sul sentiero 971 di Montagna Grande, rifugio storico dei banditi"},
+  {n:"Kuddia Mida",lat:36.7888,lng:11.9939,cat:"Visite",sub:"Sentiero",d:"Cono vulcanico panoramico, fine dell’anello di Montagna Grande da Sibà"},
+  {n:"Kuddia Attalora",lat:36.7474,lng:12.0204,cat:"Visite",sub:"Sentiero",d:"Vetta con vista sui crateri e, nei giorni chiari, sulla costa africana"},
+  {n:"Valle di Monastero",lat:36.7733,lng:11.9796,cat:"Visite",sub:"Sentiero",d:"Valle terrazzata di vigneti sul sentiero 976 verso Punta Li Marsi"},
+  {n:"Acropoli di San Marco",lat:36.8224,lng:11.9512,cat:"Visite",sub:"Monumento",d:"Acropoli punico-romana dell’antica Cossyra, con cisterne e teste in marmo"},
+  {n:"Museo Punta Spadillo",lat:36.8236,lng:12.0116,cat:"Visite",sub:"Monumento",d:"Museo vulcanologico del Parco presso il faro. Orari variabili: telefona"},
+  {n:"Giardino Pantesco (FAI)",lat:36.808,lng:12.0214,cat:"Visite",sub:"Monumento",d:"Muro circolare in pietra lavica che protegge un solo albero di arancio"},
+  {n:"Madonna della Margana",lat:36.816,lng:11.9603,cat:"Visite",sub:"Monumento",d:"Santuario della patrona dell’isola, ricostruito nel 1795"},
+  {n:"Chiesa Sant’Antonio Mueggen",lat:36.789,lng:12.0215,cat:"Visite",sub:"Monumento",d:"Chiesetta rurale tra i dammusi di Mueggen, sentiero 978"},
+  {n:"Cooperativa Capperi",lat:36.7721,lng:11.961,cat:"Visite",sub:"Monumento",d:"Capperificio IGP: si vede la cernita e la salatura. Agosto = raccolta!"},
+  {n:"Green Divers (Mursia)",lat:36.8146,lng:11.928,cat:"Visite",sub:"Diving",d:"Diving center a Mursia: immersioni, corsi ed escursioni in barca"},
+  {n:"Il Cappero",lat:36.8312,lng:11.9462,cat:"Cibo",sub:"Ristorante",d:"Via Roma: raviolo pantesco, coda di rospo e tortino al passito"},
+  {n:"Ristorante La Vela (Scauri)",lat:36.7676,lng:11.9665,cat:"Cibo",sub:"Ristorante",d:"Sulla roccia al porto di Scauri, pesce con tocchi nordafricani"},
+  {n:"Da Andrea (Gadir)",lat:36.812,lng:12.0248,cat:"Cibo",sub:"Ristorante",d:"Lounge sul mare a Gadir: tartare del giorno e cheesecake al passito"},
+  {n:"Lido Shurhuq",lat:36.7959,lng:11.9353,cat:"Cibo",sub:"Beach Bar",d:"Unico lido attrezzato: lettini, canoe, docce, pranzo e aperitivo"},
+  {n:"Marco De Bartoli — Bukkuram",lat:36.7956,lng:11.9592,cat:"Aperitivo",sub:"Vigneto",d:"Dammuso del ’700 e vigne ad alberello. CHIUSO domeniche e festivi"},
+  {n:"Cantina Basile",lat:36.7952,lng:11.9612,cat:"Aperitivo",sub:"Vigneto",d:"Degustazioni 17-20 di bianchi, rossi e passiti. CHIUSO la domenica"},
+  {n:"Salvatore Murana",lat:36.7935,lng:12.0206,cat:"Aperitivo",sub:"Vigneto",d:"Storico produttore di passito a Mueggen, visite su appuntamento"},
+  {n:"Ferrandes",lat:36.786,lng:12.0239,cat:"Aperitivo",sub:"Vigneto",d:"Cantina artigianale familiare a Mueggen, passito da zibibbo"},
+  {n:"Daniel Pasticceria",lat:36.8304,lng:11.9415,cat:"Dolci",sub:"Pasticceria",d:"Via Catania: gelato e dolci panteschi, 4.8 su oltre 300 recensioni"}
 ];
 
 var dayRoutes=[
@@ -701,15 +733,18 @@ var plannedDays={
 // MAP
 // ═══════════════════════════════════════════════════════════════
 var catColors={Visite:"#bfdbfe",Cibo:"#fed7aa",Aperitivo:"#fde68a",Dolci:"#fbcfe8",Hotel:"#c4b5fd"};
-var subIcons={Natura:"🌋",Mare:"🌊",Monumento:"🏰",Ristorante:"🍽️",Trattoria:"🍜",Pizzeria:"🍕","Beach Bar":"🏖️",Panificio:"🥖","Aperitivo Bar":"🥂",Vigneto:"🍇",Pasticceria:"🍡",Hotel:"🏨"};
+var subIcons={Natura:"🌋",Mare:"🌊",Monumento:"🏰",Ristorante:"🍽️",Trattoria:"🍝",Pizzeria:"🍕","Beach Bar":"🏖️",Panificio:"🥖","Aperitivo Bar":"🥂",Vigneto:"🍇",Pasticceria:"🧁",Hotel:"🏨",Terme:"♨️",Sentiero:"🥾",Diving:"🤿"};
 var map,placeLayer,routeLayer,curDay='all',curCat='all';
 // Filter keys map to either a category (cat) or a subcategory (sub).
 // "Ristorante" deliberately includes trattorie and pizzerie — all places to eat.
 var catGroups={
   Mare:{sub:['Mare','Beach Bar']},
   Ristorante:{sub:['Ristorante','Trattoria','Pizzeria']},
-  Aperitivo:{cat:['Aperitivo']},
+  Aperitivo:{sub:['Aperitivo Bar','Beach Bar']},
   Dolci:{cat:['Dolci'],sub:['Pasticceria','Panificio']},
+  Terme:{sub:['Terme']},
+  Sentiero:{sub:['Sentiero']},
+  Vigneto:{sub:['Vigneto']},
   Natura:{sub:['Natura']},
   Monumento:{sub:['Monumento']}
 };
@@ -748,8 +783,10 @@ function renderMap(){
     var icon=L.divIcon({className:cls,html:'<div style="background:'+bg+';width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;">'+ic+'</div>',iconSize:[30,30],iconAnchor:[15,15]});
     var m=L.marker([p.lat,p.lng],{icon:icon});
     m.on('click',function(){
-      var h='<div style="font-family:-apple-system,sans-serif"><strong>'+p.n+'</strong><br><span style="font-size:12px;color:#666">'+p.sub+'</span>';
+      var h='<div style="font-family:-apple-system,sans-serif;max-width:220px"><strong>'+p.n+'</strong><br><span style="font-size:12px;color:#666">'+p.sub+'</span>';
+      if(p.d)h+='<br><span style="font-size:11.5px;color:#444;line-height:1.45">'+p.d+'</span>';
       if(pd.length)h+='<br><span style="font-size:11px;color:#2563eb;font-weight:600">📅 G'+pd.join(', G')+'</span>';
+      else h+='<br><span style="font-size:11px;color:#999">Non in programma</span>';
       h+='<br><a href="https://www.google.com/maps/search/'+encodeURIComponent(p.n+' Pantelleria')+'" target="_blank" style="font-size:12px">📍 Google Maps</a></div>';
       m.bindPopup(h,{maxWidth:240}).openPopup();
     });
