@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#0f172a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Pantelleria 2026</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+:root{
+  --bg:#f8fafc;--card:#fff;--text:#0f172a;--text2:#475569;--text3:#94a3b8;
+  --accent:#2563eb;--accent-soft:#dbeafe;--orange:#ea580c;--orange-soft:#fff7ed;
+  --green:#059669;--purple:#7c3aed;--red:#dc2626;--teal:#0891b2;
+  --border:#e2e8f0;--border2:#f1f5f9;
+  --shadow:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md:0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg:0 12px 40px rgba(0,0,0,0.12);
+  --radius:20px;--radius-sm:12px;--radius-xs:8px;
+  --font:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif;
+  --header-h:0px;--filter-h:56px;
+}
+@media(prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a;--card:#1e293b;--text:#f1f5f9;--text2:#94a3b8;--text3:#64748b;
+    --accent:#3b82f6;--accent-soft:#1e3a5f;--orange-soft:#2a1a0a;
+    --border:#334155;--border2:#1e293b;
+    --shadow:0 1px 3px rgba(0,0,0,0.3);--shadow-md:0 4px 12px rgba(0,0,0,0.3);--shadow-lg:0 12px 40px rgba(0,0,0,0.4);
+  }
+}
+[data-theme="dark"]{
+  --bg:#0f172a;--card:#1e293b;--text:#f1f5f9;--text2:#94a3b8;--text3:#64748b;
+  --accent:#3b82f6;--accent-soft:#1e3a5f;--orange-soft:#2a1a0a;
+  --border:#334155;--border2:#1e293b;
+  --shadow:0 1px 3px rgba(0,0,0,0.3);--shadow-md:0 4px 12px rgba(0,0,0,0.3);--shadow-lg:0 12px 40px rgba(0,0,0,0.4);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+button{font-family:var(--font);cursor:pointer;border:none;background:none;-webkit-tap-highlight-color:transparent}
+a{color:var(--accent);text-decoration:none}
+
+/* ═══ MAP (full screen behind everything) ═══ */
+#map{position:fixed;top:0;left:0;right:0;height:100vh;z-index:1}
+.leaflet-top{top:60px!important}
+
+/* ═══ BOTTOM SHEET ═══ */
+.sheet{position:fixed;top:0;left:0;right:0;bottom:0;z-index:500;pointer-events:none;display:flex;flex-direction:column}
+.sheet-spacer{flex-shrink:0;height:45vh;min-height:200px;transition:height .4s cubic-bezier(.32,.72,0,1)}
+.sheet-panel{flex:1;background:var(--bg);border-radius:20px 20px 0 0;box-shadow:0 -4px 20px rgba(0,0,0,0.15);pointer-events:auto;display:flex;flex-direction:column;overflow:hidden;transition:border-radius .3s}
+.sheet.full .sheet-spacer{height:0px}
+.sheet.full .sheet-panel{border-radius:0}
+.sheet.peek .sheet-spacer{height:calc(100vh - 180px)}
+
+/* Handle */
+.sheet-handle{padding:12px 0 8px;text-align:center;cursor:grab;flex-shrink:0;position:relative}
+.sheet-handle::before{content:'';display:block;width:36px;height:4px;background:var(--text3);border-radius:2px;margin:0 auto;opacity:0.5}
+.sheet-handle-hint{font-size:11px;color:var(--text3);margin-top:6px;font-weight:500}
+
+/* Filter bar */
+.filter-bar{padding:6px 16px 10px;display:flex;gap:6px;overflow-x:auto;flex-shrink:0;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.filter-bar::-webkit-scrollbar{display:none}
+.pill{padding:7px 14px;border-radius:20px;font-size:12px;font-weight:600;background:var(--card);color:var(--text2);border:1.5px solid var(--border);white-space:nowrap;transition:all .2s;flex-shrink:0}
+.pill:active{transform:scale(0.95)}
+.pill.active{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 2px 8px rgba(37,99,235,0.3)}
+.pill.d1.active{background:#2563eb;border-color:#2563eb}
+.pill.d2.active{background:#0891b2;border-color:#0891b2}
+.pill.d3.active{background:#ea580c;border-color:#ea580c}
+.pill.d4.active{background:#7c3aed;border-color:#7c3aed}
+.pill-sep{width:1px;height:28px;background:var(--border);flex-shrink:0;align-self:center}
+
+/* Scrollable content */
+.sheet-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 16px 100px}
+
+/* ═══ OVERVIEW BENTO ═══ */
+.bento{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.bento-card{background:var(--card);border-radius:var(--radius-sm);padding:16px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.bento-card.wide{grid-column:span 2}
+.bento-icon{font-size:24px;margin-bottom:6px}
+.bento-value{font-size:22px;font-weight:700;color:var(--text)}
+.bento-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px}
+.bento-card.countdown-card{background:linear-gradient(135deg,#1e3a5f,#0f172a);color:#fff}
+.bento-card.countdown-card .bento-label{color:#94a3b8}
+.bento-card.countdown-card .bento-value{color:#fff}
+.next-activity{font-size:13px;color:var(--text2);margin-top:8px;line-height:1.4}
+.next-activity strong{color:var(--text)}
+.intensity-bar{display:flex;gap:3px;margin-top:8px}
+.intensity-dot{width:8px;height:8px;border-radius:50%;background:var(--border)}
+.intensity-dot.filled{background:var(--accent)}
+.intensity-dot.filled.high{background:var(--orange)}
+
+/* ═══ DAY CARD ═══ */
+.day-section{margin-bottom:24px;scroll-margin-top:60px}
+.day-label{position:sticky;top:0;z-index:10;background:var(--bg);padding:12px 0 8px;display:flex;align-items:center;gap:10px}
+.day-badge{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700;flex-shrink:0}
+.day-info{flex:1}
+.day-info-title{font-size:15px;font-weight:700;color:var(--text)}
+.day-info-meta{font-size:12px;color:var(--text3)}
+.day-intensity{display:flex;gap:2px;align-items:center}
+.day-intensity-dot{width:6px;height:6px;border-radius:50%;background:var(--border)}
+.day-intensity-dot.on{background:currentColor}
+
+/* Timeline */
+.timeline{position:relative;padding-left:28px}
+.timeline::before{content:'';position:absolute;left:9px;top:16px;bottom:16px;width:2px;background:var(--border);border-radius:1px}
+.tl-item{position:relative;padding:10px 0;transition:opacity .3s}
+.tl-item::before{content:'';position:absolute;left:-19px;top:16px;width:10px;height:10px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);z-index:2;transition:transform .2s}
+.tl-item.food::before{background:#ea580c}
+.tl-item.transport::before{background:#64748b}
+.tl-item.beach::before{background:#0891b2}
+.tl-item.wine::before{background:#7c3aed}
+.tl-item.aperitivo::before{background:#f59e0b}
+.tl-item.flight::before{background:#dc2626}
+.tl-item.hotel::before{background:#6366f1}
+.tl-item.done{opacity:0.45}
+.tl-item.done::after{content:'✓';position:absolute;left:-23px;top:14px;font-size:14px;color:var(--green);font-weight:700;z-index:3}
+.tl-item.done::before{background:var(--green)}
+
+/* Event card */
+.ev-card{background:var(--card);border-radius:var(--radius-sm);padding:14px 16px;box-shadow:var(--shadow);transition:transform .15s,box-shadow .15s;position:relative;overflow:hidden}
+.ev-card:active{transform:scale(0.98)}
+.ev-card.booked{border-left:3px solid var(--red)}
+.ev-time{font-size:11px;font-weight:700;color:var(--accent);letter-spacing:0.3px}
+.ev-title{font-size:14px;font-weight:600;margin-top:2px;color:var(--text);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.ev-desc{font-size:12.5px;color:var(--text2);margin-top:4px;line-height:1.5}
+.ev-badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:4px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#fff;background:var(--red)}
+.ev-expand{margin-top:10px;border-top:1px solid var(--border2);padding-top:10px;display:none;animation:slideDown .2s ease}
+.ev-card.expanded .ev-expand{display:block}
+@keyframes slideDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.ev-expand-content{font-size:12px;color:var(--text2);line-height:1.8;background:var(--bg);border-radius:var(--radius-xs);padding:12px}
+.ev-chevron{position:absolute;right:14px;top:14px;font-size:12px;color:var(--text3);transition:transform .2s}
+.ev-card.expanded .ev-chevron{transform:rotate(180deg)}
+
+/* Swipe hint */
+.swipe-indicator{position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--green);border-radius:2px 0 0 2px;opacity:0;transition:opacity .2s}
+.ev-card.swiping .swipe-indicator{opacity:1}
+
+/* Special boxes */
+.flight-box{background:linear-gradient(135deg,#fef2f2,#fee2e2);border:1.5px solid #fca5a5;border-radius:var(--radius-sm);padding:4px;margin:0}
+[data-theme="dark"] .flight-box,.dark .flight-box{background:linear-gradient(135deg,#1a0f0f,#2a1515);border-color:#7f1d1d}
+.special-box{background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1.5px solid #93c5fd;border-radius:var(--radius-sm);padding:4px;margin:0}
+[data-theme="dark"] .special-box,.dark .special-box{background:linear-gradient(135deg,#0f1a2e,#152040);border-color:#1e40af}
+
+/* Alt fork */
+.alt-fork{background:var(--card);border:2px dashed #fbbf24;border-radius:var(--radius);padding:16px;margin:6px 0;position:relative}
+.alt-fork-badge{position:absolute;top:-10px;left:16px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;padding:3px 10px;border-radius:8px;font-size:10px;font-weight:700;letter-spacing:0.3px}
+.alt-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+@media(max-width:500px){.alt-grid{grid-template-columns:1fr}}
+.alt-opt{border-radius:var(--radius-xs);padding:12px;border:1.5px solid var(--border);background:var(--bg);transition:border-color .2s,transform .15s}
+.alt-opt:active{transform:scale(0.97)}
+.alt-opt h4{font-size:13px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.alt-opt p{font-size:12px;color:var(--text2);line-height:1.4}
+.alt-opt .note{font-size:11px;color:var(--text3);margin-top:6px;font-style:italic}
+.alt-badge{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;background:var(--accent);flex-shrink:0}
+.alt-opt.b .alt-badge{background:var(--orange)}
+
+/* Tip */
+.tip{background:linear-gradient(135deg,#fefce8,#fef9c3);border:1px solid #fde047;border-radius:var(--radius-xs);padding:12px 14px;margin:6px 0;font-size:12px;color:#713f12;line-height:1.5}
+[data-theme="dark"] .tip,.dark .tip{background:linear-gradient(135deg,#1a1a0a,#2a2510);color:#fde047;border-color:#854d0e}
+
+/* Hotel */
+.hotel-bar{margin-top:12px;padding:10px 14px;background:var(--bg);border-radius:var(--radius-xs);border:1px solid var(--border);font-size:12px;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:8px}
+.hotel-bar .h-icon{font-size:16px}
+.hotel-bar .h-name{font-weight:600;color:var(--text);flex:1}
+.hotel-bar .h-arrow{color:var(--text3);font-size:10px}
+.hotel-detail{display:none;margin-top:6px;padding:10px 14px;background:var(--bg);border-radius:var(--radius-xs);border:1px solid var(--border);font-size:12px;color:var(--text2);line-height:1.7}
+.hotel-bar.open+.hotel-detail{display:block}
+
+/* GPS button on map */
+.map-gps{position:fixed;top:70px;right:16px;z-index:400;background:var(--card);width:40px;height:40px;border-radius:50%;box-shadow:var(--shadow-lg);display:flex;align-items:center;justify-content:center;font-size:18px}
+.map-gps.active{background:#2563eb;color:#fff}
+
+/* Theme toggle */
+.theme-toggle{position:fixed;top:70px;left:16px;z-index:400;background:var(--card);width:40px;height:40px;border-radius:50%;box-shadow:var(--shadow-lg);display:flex;align-items:center;justify-content:center;font-size:16px}
+
+/* Leaflet popup override */
+.leaflet-popup-content-wrapper{border-radius:12px!important;box-shadow:var(--shadow-lg)!important;padding:0!important}
+.leaflet-popup-content{margin:12px 14px!important;font-family:var(--font)!important;font-size:13px!important;line-height:1.5!important}
+
+/* Emoji markers */
+.emark{width:30px;height:30px;border-radius:50%;border:2.5px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.25);display:flex;align-items:center;justify-content:center;font-size:15px;transition:transform .2s}
+.emark.planned{border-color:#1e293b;border-width:3px}
+.emark:hover{transform:scale(1.15)}
+
+/* Animations */
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.day-section{animation:fadeIn .5s ease both}
+.day-section:nth-child(2){animation-delay:.05s}
+.day-section:nth-child(3){animation-delay:.1s}
+.day-section:nth-child(4){animation-delay:.15s}
+.day-section:nth-child(5){animation-delay:.2s}
+
+/* Responsive */
+@media(min-width:768px){
+  .sheet-spacer{height:0!important}
+  .sheet{flex-direction:row}
+  .sheet-panel{border-radius:0;width:420px;max-width:45vw;border-right:1px solid var(--border)}
+  .sheet-handle{display:none}
+  #map{left:420px}
+  .map-gps,.theme-toggle{left:auto}
+  .theme-toggle{left:436px}
+}
+</style>
+</head>
+<body>
+
+<!-- Map -->
+<div id="map"></div>
+<button class="map-gps" id="gpsBtn" onclick="toggleGPS()">📍</button>
+<button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+
+<!-- Bottom Sheet -->
+<div class="sheet" id="sheet">
+  <div class="sheet-spacer" id="sheetSpacer"></div>
+  <div class="sheet-panel" id="sheetPanel">
+    <div class="sheet-handle" id="sheetHandle">
+      <div class="sheet-handle-hint">Pantelleria · 13–16 Ago 2026</div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filter-bar">
+      <button class="pill active" onclick="setDay('all',this)">Tutti</button>
+      <button class="pill d1" onclick="setDay(1,this)">G1 ✈️</button>
+      <button class="pill d2" onclick="setDay(2,this)">G2 🌋</button>
+      <button class="pill d3" onclick="setDay(3,this)">G3 ⛵</button>
+      <button class="pill d4" onclick="setDay(4,this)">G4 🌅</button>
+      <div class="pill-sep"></div>
+      <button class="pill active" onclick="setCat('all',this)">Tutto</button>
+      <button class="pill" onclick="setCat('Visite',this)">Visite</button>
+      <button class="pill" onclick="setCat('Cibo',this)">Cibo</button>
+      <button class="pill" onclick="setCat('Aperitivo',this)">Drink</button>
+    </div>
+
+    <!-- Scrollable content -->
+    <div class="sheet-scroll" id="sheetScroll">
+
+      <!-- Bento Overview -->
+      <div class="bento" id="bento">
+        <div class="bento-card countdown-card">
+          <div class="bento-icon">✈️</div>
+          <div class="bento-value" id="countdownVal">—</div>
+          <div class="bento-label">alla partenza</div>
+        </div>
+        <div class="bento-card">
+          <div class="bento-icon">🏝️</div>
+          <div class="bento-value">4 giorni</div>
+          <div class="bento-label">7 persone · 49 luoghi</div>
+        </div>
+        <div class="bento-card wide">
+          <div class="bento-icon">📋</div>
+          <div class="bento-value" style="font-size:14px;font-weight:600" id="nextActivity">—</div>
+          <div class="bento-label">prossima attività</div>
+        </div>
+      </div>
+
+      <!-- DAY 1 -->
+      <div class="day-section" data-day="1" id="day1">
+        <div class="day-label">
+          <div class="day-badge" style="background:#2563eb">1</div>
+          <div class="day-info">
+            <div class="day-info-title">✈️ Arrivo & Costa Est</div>
+            <div class="day-info-meta">Mer 13 Ago · 🌅 06:29 – 🌇 20:01 · 🌡️ 23-29°C</div>
+          </div>
+        </div>
+        <div class="timeline">
+
+          <div class="tl-item flight">
+            <div class="flight-box"><div class="ev-card booked" data-lat="36.8165" data-lng="11.9686">
+              <div class="ev-chevron">▼</div>
+              <div class="ev-time">08:10 – 08:50</div>
+              <div class="ev-title">✈️ Trapani → Pantelleria <span class="ev-badge">PRENOTATO</span></div>
+              <div class="ev-desc">DX1831 · DAT Airlines · 40min · 3 pax</div>
+              <div class="ev-expand"><div class="ev-expand-content">
+                🎫 Ref: YYA3VX · Maccarrone, Prinzivalli, Alagna<br>
+                🧳 1×8kg mano + 1×23kg stiva<br>
+                📱 Check-in online 22h prima<br>
+                💰 €234.72 pagato
+              </div></div>
+            </div></div>
+          </div>
+
+          <div class="tl-item transport">
+            <div class="ev-card booked" data-lat="36.8165" data-lng="11.9686">
+              <div class="ev-chevron">▼</div>
+              <div class="ev-time">09:00</div>
+              <div class="ev-title">🚗 Ritiro auto — Sicily By Car <span class="ev-badge">PRENOTATO</span></div>
+              <div class="ev-desc">Citroën C3 · Km illimitati · Riconsegna 16 ago</div>
+              <div class="ev-expand"><div class="ev-expand-content">
+                📍 Via Madonna della Margana, PNL<br>
+                📞 +39 0923 912940<br>
+                🎫 Ref: 757392604 · IT588008819<br>
+                💳 Deposito €200 · Franchigia €1.464<br>
+                ⛽ Restituire stesso livello
+              </div></div>
+            </div>
+          </div>
+
+          <div class="tl-item hotel">
+            <div class="ev-card" data-lat="36.7872" data-lng="12.0487">
+              <div class="ev-chevron">▼</div>
+              <div class="ev-time">09:30 – 10:00</div>
+              <div class="ev-title">🏠 Check-in Dammuso</div>
+              <div class="ev-desc">Contrada Khamma 109 · Villa 3 camere · ~15min da aeroporto</div>
+              <div class="ev-expand"><div class="ev-expand-content">
+                📍 Contrada Khamma, 109, 91017 Kamma<br>
+                📞 +39 0923 915585<br>
+                🏠 3 camere · 7 ospiti · A/C, cucina, BBQ<br>
+                💰 €1.975,05 (Booking.com)<br>
+                💡 Dammuso: muri pietra lavica con cupola
+              </div></div>
+            </div>
+          </div>
+
+          <div class="tl-item beach">
+            <div class="ev-card" data-lat="36.7990" data-lng="12.0470">
+              <div class="ev-chevron">▼</div>
+              <div class="ev-time">10:30 – 12:30</div>
+              <div class="ev-title">🌊 Cala Levante + Arco dell'Elefante</div>
+              <div class="ev-desc">Primo tuffo! Snorkeling eccellente, vista sull'Arco iconico</div>
+              <div class="ev-expand"><div class="ev-expand-content">
+                📍 Tracino (36.7990, 12.0470)<br>
+                🐘 L'Arco visibile dalla baia<br>
+                👟 Scarpette obbligatorie — rocce<br>
+                🏊 Fondali bassi → profondi · Top snorkeling
+              </div></div>
+            </div>
+          </div>
+
+          <div class="tl-item food">
+            <div class="ev-card" data-lat="36.7985" data-lng="12.0490">
+              <div class="ev-chevron">▼</div>
+              <div class="ev-time">13:00 – 14:30</div>
+              <div class="ev-title">🍽️ Pranzo — Le Cale</div>
+              <div class="ev-desc">Terrazza vista Cala Levante · Pesce, pasta capperi e bottarga</div>
+              <div class="ev-expand"><div class="ev-expand-content">
+                📍 Contrada Cala Levante 34<br>
+                💰 €€-€€€ · ~€30-40/persona<br>
+                🐟 Tavolo fronte mare. Stessi proprietari Sesiventi
+              </div></div>
+            </div>
+          </div>
+
+          <div class="tl-item beach">
+            <div class="ev-card" data-lat="36.8121" data-lng="12.0251">
+              <div class="ev-chevron">▼</div>
+              <div class="ev-time">15:00 – 17:00</div>
+              <div class="ev-title">♨️ Cala Gadir — Terme</div>
+              <div class="ev-desc">Vasche 35-40°C in roccia vulcanica · Gratuite 24/7</div>
+              <div class="ev-expand"><div class="ev-expand-content">
+                📍 Costa est (36.8121, 12.0251)<br>
+                👟 Rocce scivolose — scarpette!<br>
+                💡 Tardo pomeriggio: meno gente, luce magica
+              </div></div>
+            </div>
+          </div>
+
+          <div class="tl-item wine">
+            <div class="ev-card booked" data-lat="36.7980" data-lng="12.0350">
+              <div class="ev-chevron">▼</div>
+              <div class="ev-time">18:30 – 20:00</div>
+              <div class="ev-title">🍇 Donnafugata <span class="ev-badge">PRENOTATO</span></div>
+              <div class="ev-desc">Vigneto Zibibbo UNESCO · 3 vini + Passito · 7 persone · €280</div>
+              <div class="ev-expand"><div class="ev-expand-content">
+                📍 Contrada Khamma Fuori 6<br>
+                📞 +39 0923 915 649<br>
+                🎫 Ref: 01-P-20260813-D-BK-013<br>
+                👤 Prenotato: Antonio Alagna · 3339182554<br>
+                ⏰ Arriva 10 min prima · ~1.5h<br>
+                ⚠️ Cancellazione: iscritto entro 2gg feriali
+              </div></div>
+            </div>
+          </div>
+
+          <div class="tl-item food">
+            <div class="alt-fork">
+              <div class="alt-fork-badge">⚡ CENA</div>
+              <div class="alt-grid">
+                <div class="alt-opt">
+                  <h4><span class="alt-badge">A</span> Acquamore</h4>
+                  <p>Fine dining sul mare · Crudi, pasta ai ricci</p>
+                  <div class="note">📍 Cala Tramontana · €€€</div>
+                </div>
+                <div class="alt-opt b">
+                  <h4><span class="alt-badge">B</span> Il Principe e il Pirata</h4>
+                  <p>#1 dell'isola · Michelin · Couscous, terrazza</p>
+                  <div class="note">📍 Punta Karace · €€€ · Prenota 5gg prima!</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="hotel-bar" onclick="this.classList.toggle('open')">
+          <span class="h-icon">🏨</span>
+          <span class="h-name">Dammuso Arco dell'Elefante</span>
+          <span class="h-arrow">▼</span>
+        </div>
+        <div class="hotel-detail">
+          📍 Contrada Khamma, 109 · 📞 +39 0923 915585<br>
+          🏠 3 camere · Vista mare · A/C, cucina, BBQ, patio<br>
+          💰 €1.975,05 · Dammuso tradizionale pietra lavica
+        </div>
+      </div>
+
+      <!-- DAY 2 -->
+      <div class="day-section" data-day="2" id="day2">
+        <div class="day-label">
+          <div class="day-badge" style="background:#0891b2">2</div>
+          <div class="day-info">
+            <div class="day-info-title">🌋 Nord-Ovest & Sesiventi Night</div>
+            <div class="day-info-meta">Gio 14 Ago · 🌅 06:30 – 🌇 20:00 · 🌡️ 23-29°C</div>
+          </div>
+        </div>
+        <div class="timeline">
+
+          <div class="tl-item transport">
+            <div class="tip">
+              <strong>📐 Logistica:</strong> Costa NORD-OVEST oggi. Rientro dammuso entro 16:00 per docce (7 persone = 1.5h). Partire per Sesiventi (Mursia, ~20 min) entro 18:45.
+            </div>
+          </div>
+
+          <div class="tl-item sight">
+            <div class="ev-card" data-lat="36.8158" data-lng="11.9868">
+              <div class="ev-chevron">▼</div>
+              <div class="ev-time">07:30 – 10:00</div>
+              <div class="ev-title">🌋 Specchio di Venere + Fanghi</div>
+              <div class="ev-desc">Vai PRESTO! Lago vulcanico, fanghi sulla riva sud. Gratuito</div>
+              <div class="ev-expand"><div class="ev-expand-content">
+                📍 Nord isola (36.8158, 11.9868)<br>
+                ♨️ Acqua ~40°C zone termali<br>
+                🧖 Fanghi riva sud: spalma + secca al sole<br>
+                ⏰ Entro le 8 — poi affollatissimo<br>
+                💡 Zero ombra! Porta acqua + crema
+              </div></div>
+            </div>
+          </div>
+
+          <div class="tl-item sight">
+            <div class="ev-card" data-lat="36.8080" data-lng="11.9317">
+              <div class="ev-chevron">▼</div>
+              <div class="ev-time">10:15 – 11:00</div>
+              <div class="ev-title">🏰 Sesi di Mursia</div>
+              <div class="ev-desc">Tombe megalitiche Età del Bronzo · 50+ monumenti · Gratuito</div>
+              <div class="ev-expand"><div class="ev-expand-content">
+                📍 Costa nord-ovest (36.8080, 11.9317)<br>
+                🏛️ Uniche nel Mediterraneo<br>
+                ⏱️ ~30-45 min · Sulla strada verso ovest<br>
+                💡 Sesiventi è qui vicino — ricognizione per stasera!
+              </div></div>
+            </div>
+          </div>
+
+          <div class="tl-item food">
+            <div class="alt-fork">
+              <div class="alt-fork-badge">⚡ PRANZO</div>
+              <div class="alt-grid">
+                <div class="alt-opt">
+                  <h4><span class="alt-badge">A</span> Agriturismo Zinedi</h4>
+                  <p>Vista Specchio di Venere · Giardino, piscina, cucina pantesca</p>
+                  <div class="note">📍 Zona nord · €€</div>
+                </div>
+                <div class="alt-opt b">
+                  <h4><span class="alt-badge">B</span> Cicci's Beach</h4>
+                  <p>Beach bar a Bue Marino · Pranzo leggero → tuffo</p>
+                  <div class="note">📍 Costa ovest · €€ · Casual</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tl-item beach">
+            <div class="alt-fork">
+              <div class="alt-fork-badge">⚡ POMERIGGIO</div>
+              <div class="alt-grid">
+                <div class="alt-opt">
+                  <h4><span class="alt-badge">A</span> Satarìa + Bue Marino</h4>
+                  <p>Grotta termale 40°C (Ulisse!) + grotta marina smeraldo</p>
+                  <div class="note">📍 Costa ovest · Porta torcia</div>
+                </div>
+                <div class="alt-opt b">
+                  <h4><span class="alt-badge">B</span> Bue Marino + Cinque Denti</h4>
+                  <p>Grotta marina + formazioni rocciose. Snorkeling top</p>
+                  <div class="note">📍 Costa ovest/sud · Maschera!</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tl-item transport">
+            <div class="ev-card">
+              <div class="ev-time">15:30</div>
+              <div class="ev-title">🚗 Rientro al dammuso</div>
+              <div class="ev-desc">~20 min dalla costa ovest. Docce + preparazione Sesiventi!</div>
+            </div>
+          </div>
+
+          <div class="tl-item aperitivo">
+            <div class="special-box"><div class="ev-card booked" data-lat="36.8050" data-lng="11.9350">
+              <div class="ev-chevron">▼</div>
+              <div class="ev-time">19:00 – tardi</div>
+              <div class="ev-title">🥂 Sesiventi — Rooftop + DJ + DISCO <span class="ev-badge">PRENOTATO</span></div>
+              <div class="ev-desc">€40/pers · Drink + piatto (porzioni ENORMI = cena!) · Dress code elegante</div>
+              <div class="ev-expand"><div class="ev-expand-content">
+                📍 Mursia, Altopiano dei Sesi<br>
+                📞 +39 350 528 2450<br>
+                🍾 Spumante arrivo + cocktail premium<br>
+                🍽️ Polpette, tartare, fritto, tapas<br>
+                👟 Scarpe giù sul rooftop<br>
+                🎵 DJ tramonto → DISCO NIGHT<br>
+                🌙 Si resta qui tutta sera!<br>
+                💡 Fame tardi? Altamarea (Scauri) fino alle 7:00
+              </div></div>
+            </div></div>
+          </div>
+
+        </div>
+        <div class="hotel-bar" onclick="this.classList.toggle('open')">
+          <span class="h-icon">🏨</span><span class="h-name">Dammuso Arco dell'Elefante</span><span class="h-arrow">▼</span>
+        </div>
+        <div class="hotel-detail">📍 Contrada Khamma, 109 · Rientro a fine serata</div>
+      </div>
+
+      <!-- DAY 3 -->
+      <div class="day-section" data-day="3" id="day3">
+        <div class="day-label">
+          <div class="day-badge" style="background:#ea580c">3</div>
+          <div class="day-info">
+            <div class="day-info-title">⛵ Yacht Day & Ferragosto</div>
+            <div class="day-info-meta">Ven 15 Ago (FERRAGOSTO) · 🌅 06:30 – 🌇 19:59 · 🌡️ 23-29°C</div>
+          </div>
+        </div>
+        <div class="timeline">
+
+          <div class="tl-item transport">
+            <div class="tip">
+              <strong>📐 Logistica:</strong> Yacht 09:30–17:00 dal porto. Rientro dammuso 17:15. Docce 17:15–19:00. Dammuso → Da Pina (~15 min). Cena 21:30.
+            </div>
+          </div>
+
+          <div class="tl-item sight">
+            <div class="special-box"><div class="ev-card booked" data-lat="36.8290" data-lng="11.9440">
+              <div class="ev-chevron">▼</div>
+              <div class="ev-time">09:00 ⚠️ 30 MIN PRIMA</div>
+              <div class="ev-title">📍 Ritrovo porto <span class="ev-badge">PRENOTATO</span></div>
+              <div class="ev-desc">Lungomare Borsellino 84 · Non perdere il turno!</div>
+              <div class="ev-expand"><div class="ev-expand-content">
+                ⚠️ PRESENTARSI ORE 09:00 (30 min prima)<br>
+                📍 Lungomare Paolo Borsellino, 84<br>
+                🚗 Dal dammuso al porto: ~15 min<br>
+                💡 Lo yacht parte 09:30 — puntualissimi!
+              </div></div>
+            </div></div>
+          </div>
+
+          <div class="tl-item sight">
+            <div class="special-box"><div class="ev-card booked" data-lat="36.785" data-lng="11.985">
+              <div class="ev-chevron">▼</div>
+              <div class="ev-time">09:30 – 17:00</div>
+              <div class="ev-title">⛵ Tour Isola in Yacht <span class="ev-badge">PRENOTATO</span></div>
+              <div class="ev-desc">Circumnavigazione completa · Cale, grotte, pranzo a bordo · 7 biglietti</div>
+              <div class="ev-expand"><div class="ev-expand-content">
+                ⛵ Tour con Simone & Luck<br>
+                🎫 Ref: GYG7VKVW75Y3 · PIN: 3D7BBQp1<br>
+                👥 7 biglietti · GetYourGuide<br>
+                📞 +39 06 9674 1658 (24/7)<br>
+                ⚠️ Cancellazione gratuita entro 09:30 del 14/08<br><br>
+                🌊 Cale nascoste · Grotte · Arco dal mare<br>
+                Bolle termali Nikà · Balata dei Turchi<br>
+                🍝 Pranzo a bordo incluso<br>
+                💡 Porta: costume, crema, asciugamano, maschera
+              </div></div>
+            </div></div>
+          </div>
+
+          <div class="tl-item transport">
+            <div class="ev-card">
+              <div class="ev-time">17:00 – 19:00</div>
+              <div class="ev-title">🚗 Rientro + 🚿 Docce</div>
+              <div class="ev-desc">Porto → dammuso ~15 min · 1h45 per 7 persone · Vestirsi per uscire!</div>
+            </div>
+          </div>
+
+          <div class="tl-item food">
+            <div class="ev-card booked" data-lat="36.8130" data-lng="11.9840">
+              <div class="ev-chevron">▼</div>
+              <div class="ev-time">21:30 – 23:00</div>
+              <div class="ev-title">🍽️ Trattoria da Pina <span class="ev-badge">PRENOTATO</span></div>
+              <div class="ev-desc">Ravioli panteschi (ricotta+menta), stufato · Travelers' Choice</div>
+              <div class="ev-expand"><div class="ev-expand-content">
+                📍 Via Lago 34 (nord, vicino Specchio)<br>
+                ⏰ Ore 21:30 · 👥 7 persone<br>
+                💰 €€ · ~€25-35/persona<br>
+                💡 Preferito dai locali!
+              </div></div>
+            </div>
+          </div>
+
+          <div class="tl-item aperitivo">
+            <div class="ev-card">
+              <div class="ev-time">23:00 – tardi</div>
+              <div class="ev-title">🎶 Notte di Ferragosto!</div>
+              <div class="ev-desc">Tutta l'isola è in strada · Alta Marea (Scauri, fino 7:00) o piazza</div>
+            </div>
+          </div>
+
+        </div>
+        <div class="hotel-bar" onclick="this.classList.toggle('open')">
+          <span class="h-icon">🏨</span><span class="h-name">Dammuso Arco dell'Elefante</span><span class="h-arrow">▼</span>
+        </div>
+        <div class="hotel-detail">📍 Contrada Khamma, 109 · Rientro a fine serata</div>
+      </div>
+
+      <!-- DAY 4 -->
+      <div class="day-section" data-day="4" id="day4">
+        <div class="day-label">
+          <div class="day-badge" style="background:#7c3aed">4</div>
+          <div class="day-info">
+            <div class="day-info-title">🌅 Ultimo Tuffo & Partenza</div>
+            <div class="day-info-meta">Sab 16 Ago · 🌅 06:31 – 🌇 19:58 · 🌡️ 23-29°C</div>
+          </div>
+        </div>
+        <div class="timeline">
+
+          <div class="tl-item sight">
+            <div class="alt-fork">
+              <div class="alt-fork-badge">⚡ MATTINA</div>
+              <div class="alt-grid">
+                <div class="alt-opt">
+                  <h4><span class="alt-badge">A</span> Laghetto delle Ondine</h4>
+                  <p>Piscina naturale in roccia · 20min a piedi da Spadillo</p>
+                  <div class="note">📍 Nord-est · Porta scarpette</div>
+                </div>
+                <div class="alt-opt b">
+                  <h4><span class="alt-badge">B</span> Punta Spadillo</h4>
+                  <p>Faro panoramico + sentieri Parco Nazionale + rovine WWII</p>
+                  <div class="note">📍 Nord-est · Facile</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tl-item food">
+            <div class="ev-card" data-lat="36.8295" data-lng="11.9425">
+              <div class="ev-chevron">▼</div>
+              <div class="ev-time">10:30 – 11:30</div>
+              <div class="ev-title">🍡 Pasticceria Katia + Panificio Marrone</div>
+              <div class="ev-desc">Granite, baci panteschi, gelato · Focaccia e cannoli da portare</div>
+              <div class="ev-expand"><div class="ev-expand-content">
+                📍 Katia: Lungomare Borsellino · ⭐ 4.5/5 (794 rec.)<br>
+                🍡 Bacio pantesco, granita gelsi, gelato pistacchio<br>
+                📍 Marrone: Via Borgo Italia · Focaccia, cannoli<br>
+                💡 Prendi qualcosa per l'aereo!
+              </div></div>
+            </div>
+          </div>
+
+          <div class="tl-item food">
+            <div class="alt-fork">
+              <div class="alt-fork-badge">⚡ PRANZO</div>
+              <div class="alt-grid">
+                <div class="alt-opt">
+                  <h4><span class="alt-badge">A</span> Dammuso Ristorante</h4>
+                  <p>Cucina rustica pietra lavica · Caponata, pesto, pesce</p>
+                  <div class="note">📍 Borgo Italia · €€</div>
+                </div>
+                <div class="alt-opt b">
+                  <h4><span class="alt-badge">B</span> Franco Castiglione</h4>
+                  <p>Pizza + pesce · Travelers' Choice · Vivace</p>
+                  <div class="note">📍 Borgo Italia · €€</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tl-item sight">
+            <div class="ev-card" data-lat="36.8290" data-lng="11.9440">
+              <div class="ev-chevron">▼</div>
+              <div class="ev-time">13:30 – 14:30</div>
+              <div class="ev-title">🛍️ Ultimo shopping — Centro</div>
+              <div class="ev-desc">Castello Barbacane · La Nicchia (capperi) · Caffè Aurora</div>
+              <div class="ev-expand"><div class="ev-expand-content">
+                🏰 Castello: fortezza medievale, ingresso libero<br>
+                🛍️ La Nicchia: capperi, conserve, pesto top<br>
+                🍷 Passito: Ben Ryè o Coste Ghirlanda<br>
+                ☕ Aurora-Policardo: granite storiche
+              </div></div>
+            </div>
+          </div>
+
+          <div class="tl-item transport">
+            <div class="ev-card booked">
+              <div class="ev-time">17:00</div>
+              <div class="ev-title">🚗 Riconsegna auto <span class="ev-badge">PRENOTATO</span></div>
+              <div class="ev-desc">Sicily By Car · Aeroporto PNL · Controlla carburante!</div>
+            </div>
+          </div>
+
+          <div class="tl-item flight">
+            <div class="flight-box"><div class="ev-card booked" data-lat="36.8165" data-lng="11.9686">
+              <div class="ev-chevron">▼</div>
+              <div class="ev-time">18:20 – 19:00</div>
+              <div class="ev-title">✈️ Pantelleria → Trapani <span class="ev-badge">PRENOTATO</span></div>
+              <div class="ev-desc">DX1836 · DAT Airlines · 40min · Arriva 1h prima</div>
+              <div class="ev-expand"><div class="ev-expand-content">
+                🎫 Ref: YYA3VX · 3 pax<br>
+                🧳 1×8kg mano + 1×23kg stiva<br>
+                💡 Arrivederci, Perla Nera! 🖤
+              </div></div>
+            </div></div>
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- /sheet-scroll -->
+  </div><!-- /sheet-panel -->
+</div><!-- /sheet -->
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// TRIP DATA
+// ═══════════════════════════════════════════════════════════════
+var TRIP={departure:"2026-08-13T08:10:00+02:00",center:[36.785,11.985],zoom:12};
+
+var places=[
+  {n:"Specchio di Venere",lat:36.8158,lng:11.9868,cat:"Visite",sub:"Natura",z:"Nord"},
+  {n:"Arco dell'Elefante",lat:36.7929,lng:12.0536,cat:"Visite",sub:"Natura",z:"Est"},
+  {n:"Cala Gadir",lat:36.8121,lng:12.0251,cat:"Visite",sub:"Mare",z:"Est"},
+  {n:"Cala Levante",lat:36.799,lng:12.047,cat:"Visite",sub:"Mare",z:"Est"},
+  {n:"Cala Tramontana",lat:36.7988,lng:12.051,cat:"Visite",sub:"Mare",z:"Est"},
+  {n:"Balata dei Turchi",lat:36.7355,lng:12.0226,cat:"Visite",sub:"Mare",z:"Sud"},
+  {n:"Montagna Grande",lat:36.777,lng:11.975,cat:"Visite",sub:"Natura",z:"Centro"},
+  {n:"Bue Marino",lat:36.7536,lng:11.9475,cat:"Visite",sub:"Mare",z:"Ovest"},
+  {n:"Cala Cinque Denti",lat:36.742,lng:11.986,cat:"Visite",sub:"Mare",z:"Sud"},
+  {n:"Castello Barbacane",lat:36.829,lng:11.944,cat:"Visite",sub:"Monumento",z:"Centro"},
+  {n:"Sesi di Mursia",lat:36.808,lng:11.9317,cat:"Visite",sub:"Monumento",z:"Nord-Ovest"},
+  {n:"Grotta di Satarìa",lat:36.7839,lng:11.9516,cat:"Visite",sub:"Mare",z:"Ovest"},
+  {n:"Laghetto delle Ondine",lat:36.8244,lng:12.0048,cat:"Visite",sub:"Mare",z:"Nord-Est"},
+  {n:"Grotta Benikulà",lat:36.7766,lng:11.9851,cat:"Visite",sub:"Natura",z:"Centro"},
+  {n:"Cala Cottone",lat:36.76,lng:12.01,cat:"Visite",sub:"Mare",z:"Sud"},
+  {n:"Cala Nikà",lat:36.7436,lng:11.9876,cat:"Visite",sub:"Mare",z:"Sud"},
+  {n:"Punta Spadillo",lat:36.8241,lng:12.0122,cat:"Visite",sub:"Natura",z:"Nord-Est"},
+  {n:"Museo del Cappero",lat:36.79,lng:11.98,cat:"Visite",sub:"Monumento",z:"Centro"},
+  {n:"Giardino Pantesco FAI",lat:36.7985,lng:12.0355,cat:"Visite",sub:"Natura",z:"Khamma"},
+  {n:"Il Principe e il Pirata",lat:36.765,lng:12.038,cat:"Cibo",sub:"Ristorante",z:"Sud-Est"},
+  {n:"Acquamore",lat:36.7995,lng:12.052,cat:"Cibo",sub:"Ristorante",z:"Est"},
+  {n:"Le Cale",lat:36.7985,lng:12.049,cat:"Cibo",sub:"Ristorante",z:"Est"},
+  {n:"Trattoria da Pina",lat:36.813,lng:11.984,cat:"Cibo",sub:"Trattoria",z:"Nord"},
+  {n:"Agriturismo Zinedi",lat:36.805,lng:11.96,cat:"Cibo",sub:"Ristorante",z:"Nord"},
+  {n:"Dammuso Ristorante",lat:36.8285,lng:11.943,cat:"Cibo",sub:"Trattoria",z:"Centro"},
+  {n:"Franco Castiglione",lat:36.828,lng:11.9428,cat:"Cibo",sub:"Pizzeria",z:"Centro"},
+  {n:"La Risacca",lat:36.77,lng:11.962,cat:"Cibo",sub:"Trattoria",z:"Scauri"},
+  {n:"I Giardini dei Rodo",lat:36.771,lng:11.973,cat:"Cibo",sub:"Ristorante",z:"Scauri"},
+  {n:"Coste Ghirlanda",lat:36.785,lng:11.965,cat:"Cibo",sub:"Ristorante",z:"Centro"},
+  {n:"Ù Truscio",lat:36.77,lng:11.957,cat:"Cibo",sub:"Ristorante",z:"Bukkuram"},
+  {n:"La Nicchia Ristorante",lat:36.773,lng:11.975,cat:"Cibo",sub:"Ristorante",z:"Scauri"},
+  {n:"Cicci's Beach",lat:36.7545,lng:11.949,cat:"Cibo",sub:"Beach Bar",z:"Ovest"},
+  {n:"Altamarea",lat:36.8292,lng:11.943,cat:"Cibo",sub:"Ristorante",z:"Centro"},
+  {n:"Panificio Marrone",lat:36.8275,lng:11.944,cat:"Cibo",sub:"Panificio",z:"Centro"},
+  {n:"Sesiventi",lat:36.805,lng:11.935,cat:"Aperitivo",sub:"Aperitivo Bar",z:"Mursia"},
+  {n:"Donnafugata",lat:36.798,lng:12.035,cat:"Aperitivo",sub:"Vigneto",z:"Khamma"},
+  {n:"Kayà Kayà",lat:36.7695,lng:11.961,cat:"Aperitivo",sub:"Aperitivo Bar",z:"Scauri"},
+  {n:"Coste Ghirlanda Aperitivo",lat:36.7852,lng:11.9652,cat:"Aperitivo",sub:"Vigneto",z:"Centro"},
+  {n:"Sikelia Aperitivo",lat:36.768,lng:11.96,cat:"Aperitivo",sub:"Aperitivo Bar",z:"Scauri"},
+  {n:"Dispensa Pantesca",lat:36.769,lng:11.9615,cat:"Aperitivo",sub:"Enoteca",z:"Scauri"},
+  {n:"Caffè Aurora",lat:36.8288,lng:11.9438,cat:"Aperitivo",sub:"Caffè",z:"Centro"},
+  {n:"Cantina Murana",lat:36.793,lng:11.975,cat:"Aperitivo",sub:"Vigneto",z:"Khamma"},
+  {n:"Lido Shurhuq",lat:36.793,lng:12.03,cat:"Aperitivo",sub:"Aperitivo Bar",z:"Est"},
+  {n:"Alta Marea",lat:36.7692,lng:11.9605,cat:"Aperitivo",sub:"Aperitivo Bar",z:"Scauri"},
+  {n:"Pasticceria Katia",lat:36.8295,lng:11.9425,cat:"Dolci",sub:"Pasticceria",z:"Centro"},
+  {n:"Dammuso (Hotel)",lat:36.7872,lng:12.0487,cat:"Hotel",sub:"Hotel",z:"Khamma"}
+];
+
+var dayRoutes=[
+  {day:1,color:"#2563eb",stops:[[36.8165,11.9686],[36.7872,12.0487],[36.799,12.047],[36.8121,12.0251],[36.798,12.035]]},
+  {day:2,color:"#0891b2",stops:[[36.8158,11.9868],[36.808,11.9317],[36.7536,11.9475],[36.805,11.935]]},
+  {day:3,color:"#ea580c",stops:[[36.829,11.944],[36.785,11.985],[36.813,11.984]]},
+  {day:4,color:"#7c3aed",stops:[[36.8244,12.0048],[36.8295,11.9425],[36.829,11.944],[36.8165,11.9686]]}
+];
+
+var plannedDays={
+  "36.8158,11.9868":[2],"36.7929,12.0536":[1],"36.8121,12.0251":[1],
+  "36.799,12.047":[1],"36.7536,11.9475":[2],"36.829,11.944":[4],
+  "36.808,11.9317":[2],"36.805,11.935":[2],"36.798,12.035":[1],
+  "36.7985,12.049":[1],"36.813,11.984":[3],"36.8295,11.9425":[4],
+  "36.8244,12.0048":[4],"36.7872,12.0487":[1,2,3,4]
+};
+
+// ═══════════════════════════════════════════════════════════════
+// MAP
+// ═══════════════════════════════════════════════════════════════
+var catColors={Visite:"#93c5fd",Cibo:"#fed7aa",Aperitivo:"#fde68a",Dolci:"#fbcfe8",Hotel:"#c4b5fd",Altro:"#cbd5e1"};
+var subIcons={Natura:"🌋",Mare:"🌊",Monumento:"🏰",Ristorante:"🍽️",Trattoria:"🍜",Pizzeria:"🍕","Beach Bar":"🏖️",Panificio:"🥖","Aperitivo Bar":"🥂",Vigneto:"🍇",Enoteca:"🍷","Caffè":"☕",Pasticceria:"🍡",Hotel:"🏨"};
+
+var map,placeLayer,routeLayer,curDay='all',curCat='all';
+var userLat=null,userLng=null,gpsActive=false,gpsWatchId=null,gpsMarker=null,gpsCircle=null;
+
+function initMap(){
+  map=L.map('map',{zoomControl:false,attributionControl:false}).setView(TRIP.center,TRIP.zoom);
+  L.control.zoom({position:'bottomright'}).addTo(map);
+  L.control.attribution({position:'bottomright',prefix:false}).addAttribution('© OSM © CARTO').addTo(map);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{maxZoom:19}).addTo(map);
+  placeLayer=L.layerGroup().addTo(map);
+  routeLayer=L.layerGroup().addTo(map);
+  renderMap();
+}
+
+function getPlanned(p){
+  var k=Math.round(p.lat*10000)/10000+','+Math.round(p.lng*10000)/10000;
+  return plannedDays[k]||[];
+}
+
+function renderMap(){
+  placeLayer.clearLayers();routeLayer.clearLayers();
+  var vis=[];
+  places.forEach(function(p){
+    var ok=curCat==='all'||p.cat===curCat;
+    if(curDay!=='all'){var pd=getPlanned(p);ok=ok&&pd.indexOf(curDay)!==-1;}
+    if(!ok)return;
+    var pd=getPlanned(p);
+    var bg=catColors[p.cat]||'#cbd5e1';
+    var ic=subIcons[p.sub]||'📌';
+    var cls='emark'+(pd.length?' planned':'');
+    var icon=L.divIcon({className:cls,html:'<div style="background:'+bg+';width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;">'+ic+'</div>',iconSize:[30,30],iconAnchor:[15,15]});
+    var m=L.marker([p.lat,p.lng],{icon:icon});
+    m.on('click',function(){
+      var h='<div style="font-family:-apple-system,sans-serif;min-width:200px">';
+      h+='<strong>'+p.n+'</strong><br><span style="font-size:11px;color:#666">'+p.sub+' · '+p.z+'</span>';
+      if(pd.length)h+='<br><span style="font-size:11px;color:#2563eb;font-weight:600">📅 Giorno '+pd.join(', ')+'</span>';
+      h+='<div style="margin-top:8px"><a href="https://www.google.com/maps/search/'+encodeURIComponent(p.n+' Pantelleria')+'" target="_blank" style="font-size:12px">📍 Google Maps</a>';
+      if(userLat){
+        var d=Math.round(Math.sqrt(Math.pow((p.lat-userLat)*111000,2)+Math.pow((p.lng-userLng)*111000*Math.cos(userLat*Math.PI/180),2)));
+        h+=' · <span style="font-size:11px;color:#666">'+( d>1000?(d/1000).toFixed(1)+'km':d+'m')+'</span>';
+        h+='<br><a href="https://www.google.com/maps/dir/'+userLat+','+userLng+'/'+encodeURIComponent(p.n+' Pantelleria')+'" target="_blank" style="font-size:12px;color:#ea580c">🧭 Indicazioni</a>';
+      }
+      h+='</div></div>';
+      m.bindPopup(h,{maxWidth:260}).openPopup();
+    });
+    placeLayer.addLayer(m);vis.push(p);
+  });
+  if(curDay!=='all'){
+    var dr=dayRoutes.find(function(d){return d.day===curDay;});
+    if(dr&&dr.stops.length>1){
+      L.polyline(dr.stops,{color:dr.color,weight:3,opacity:0.7,dashArray:'8,6'}).addTo(routeLayer);
+      dr.stops.forEach(function(s,i){
+        var ni=L.divIcon({className:'',html:'<div style="background:'+dr.color+';color:#fff;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3)">'+(i+1)+'</div>',iconSize:[20,20],iconAnchor:[10,10]});
+        L.marker(s,{icon:ni,interactive:false}).addTo(routeLayer);
+      });
+    }
+  }
+  if(vis.length){map.fitBounds(L.featureGroup(placeLayer.getLayers()).getBounds().pad(0.15));}
+}
+
+// ═══════════════════════════════════════════════════════════════
+// FILTERS
+// ═══════════════════════════════════════════════════════════════
+function setDay(d,btn){
+  curDay=d;
+  btn.parentNode.querySelectorAll('.pill[class*="d"],.pill:first-child').forEach(function(p){
+    if(p.textContent.startsWith('G')||p.textContent==='Tutti')p.classList.remove('active');
+  });
+  btn.classList.add('active');
+  renderMap();
+  document.querySelectorAll('.day-section').forEach(function(s){
+    s.style.display=(d==='all'||s.dataset.day==d)?'':'none';
+  });
+  document.getElementById('bento').style.display=d==='all'?'':'none';
+  if(d!=='all'){
+    var el=document.getElementById('day'+d);
+    if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+}
+function setCat(c,btn){
+  curCat=c;
+  var pills=btn.parentNode.querySelectorAll('.pill');
+  var sep=btn.parentNode.querySelector('.pill-sep');
+  var after=false;
+  pills.forEach(function(p){
+    if(p===sep){after=true;return;}
+    if(after||(!after&&p.textContent==='Tutto')){/* cat pills */}
+  });
+  // simpler: deactivate cat pills (after separator)
+  var allPills=Array.from(btn.parentNode.children);
+  var sepIdx=allPills.indexOf(btn.parentNode.querySelector('.pill-sep'));
+  allPills.forEach(function(p,i){if(i>sepIdx&&p.classList.contains('pill'))p.classList.remove('active');});
+  btn.classList.add('active');
+  renderMap();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INTERACTIONS
+// ═══════════════════════════════════════════════════════════════
+
+// Expand cards
+document.addEventListener('click',function(e){
+  var card=e.target.closest('.ev-card');
+  if(!card||!card.querySelector('.ev-expand'))return;
+  if(e.target.closest('a'))return;
+  card.classList.toggle('expanded');
+  // Fly map to this location
+  var lat=card.dataset.lat,lng=card.dataset.lng;
+  if(lat&&lng)map.flyTo([parseFloat(lat),parseFloat(lng)],15,{duration:0.8});
+});
+
+// Swipe to mark done (simplified: double tap)
+document.addEventListener('dblclick',function(e){
+  var item=e.target.closest('.tl-item');
+  if(!item)return;
+  item.classList.toggle('done');
+  // Save state
+  var idx=Array.from(document.querySelectorAll('.tl-item')).indexOf(item);
+  var done=JSON.parse(localStorage.getItem('done')||'{}');
+  if(item.classList.contains('done'))done[idx]=1;else delete done[idx];
+  localStorage.setItem('done',JSON.stringify(done));
+});
+
+// Restore done state
+(function(){
+  var done=JSON.parse(localStorage.getItem('done')||'{}');
+  var items=document.querySelectorAll('.tl-item');
+  Object.keys(done).forEach(function(k){if(items[k])items[k].classList.add('done');});
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// BOTTOM SHEET DRAG
+// ═══════════════════════════════════════════════════════════════
+(function(){
+  var handle=document.getElementById('sheetHandle');
+  var spacer=document.getElementById('sheetSpacer');
+  var sheet=document.getElementById('sheet');
+  var startY,startH;
+  var vh=window.innerHeight;
+  var snaps=[0,vh*0.45,vh-180];// full, half, peek
+
+  handle.addEventListener('touchstart',function(e){
+    startY=e.touches[0].clientY;
+    startH=spacer.offsetHeight;
+    spacer.style.transition='none';
+  });
+  handle.addEventListener('touchmove',function(e){
+    var dy=e.touches[0].clientY-startY;
+    var nh=Math.max(0,Math.min(vh-100,startH+dy));
+    spacer.style.height=nh+'px';
+    e.preventDefault();
+  },{passive:false});
+  handle.addEventListener('touchend',function(){
+    spacer.style.transition='height .4s cubic-bezier(.32,.72,0,1)';
+    var h=spacer.offsetHeight;
+    var closest=snaps.reduce(function(a,b){return Math.abs(b-h)<Math.abs(a-h)?b:a;});
+    spacer.style.height=closest+'px';
+    sheet.classList.remove('full','peek');
+    if(closest===0)sheet.classList.add('full');
+    else if(closest===snaps[2])sheet.classList.add('peek');
+    setTimeout(function(){map.invalidateSize();},450);
+  });
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// SCROLL → MAP SYNC
+// ═══════════════════════════════════════════════════════════════
+(function(){
+  var scroll=document.getElementById('sheetScroll');
+  var sections=document.querySelectorAll('.day-section');
+  var dayCoords={1:[36.80,12.03],2:[36.79,11.95],3:[36.80,11.97],4:[36.82,11.98]};
+  var lastDay=null;
+  var observer=new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){
+        var d=parseInt(en.target.dataset.day);
+        if(d&&d!==lastDay&&curDay==='all'){
+          lastDay=d;
+          map.flyTo(dayCoords[d],13,{duration:1});
+        }
+      }
+    });
+  },{root:scroll,threshold:0.3});
+  sections.forEach(function(s){observer.observe(s);});
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// GPS
+// ═══════════════════════════════════════════════════════════════
+function toggleGPS(){
+  var btn=document.getElementById('gpsBtn');
+  if(gpsActive){
+    if(gpsWatchId)navigator.geolocation.clearWatch(gpsWatchId);
+    if(gpsMarker)map.removeLayer(gpsMarker);
+    if(gpsCircle)map.removeLayer(gpsCircle);
+    gpsMarker=null;gpsCircle=null;gpsActive=false;userLat=null;userLng=null;
+    btn.classList.remove('active');return;
+  }
+  if(!navigator.geolocation){alert('GPS non supportato');return;}
+  gpsActive=true;btn.classList.add('active');
+  gpsWatchId=navigator.geolocation.watchPosition(function(pos){
+    userLat=pos.coords.latitude;userLng=pos.coords.longitude;
+    if(gpsMarker){gpsMarker.setLatLng([userLat,userLng]);gpsCircle.setLatLng([userLat,userLng]).setRadius(pos.coords.accuracy);}
+    else{
+      gpsMarker=L.circleMarker([userLat,userLng],{radius:8,fillColor:'#2563eb',fillOpacity:1,color:'#fff',weight:3}).addTo(map);
+      gpsCircle=L.circle([userLat,userLng],{radius:pos.coords.accuracy,fillColor:'#2563eb',fillOpacity:0.08,color:'#2563eb',weight:1}).addTo(map);
+      map.setView([userLat,userLng],14);
+    }
+  },function(){gpsActive=false;btn.classList.remove('active');alert('📍 Posizione non disponibile');},
+  {enableHighAccuracy:true,maximumAge:10000,timeout:15000});
+}
+
+// ═══════════════════════════════════════════════════════════════
+// THEME
+// ═══════════════════════════════════════════════════════════════
+function toggleTheme(){
+  var r=document.documentElement;
+  var cur=r.getAttribute('data-theme');
+  var next=cur==='dark'?'light':'dark';
+  r.setAttribute('data-theme',next);
+  document.querySelector('.theme-toggle').textContent=next==='dark'?'☀️':'🌙';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// COUNTDOWN
+// ═══════════════════════════════════════════════════════════════
+function updateCountdown(){
+  var el=document.getElementById('countdownVal');
+  var t=new Date(TRIP.departure)-new Date();
+  if(t<=0){el.textContent='ORA!';return;}
+  var d=Math.floor(t/864e5);
+  el.textContent=d>0?d+' giorni':Math.floor(t/36e5)+'h';
+  setTimeout(updateCountdown,60000);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════
+initMap();
+updateCountdown();
+</script>
+</body>
+</html>
