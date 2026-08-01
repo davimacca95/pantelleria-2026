@@ -61,6 +61,14 @@ body.fulltext .map-section{height:0}
 .tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
 .tab.d1.active{background:#2563eb}
 .tab.d2.active{background:#0891b2}
+
+/* ═══ CATEGORY FILTERS ═══ */
+.cat-filters{position:sticky;top:118px;z-index:89;background:var(--bg);padding:8px 16px;display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-bottom:1px solid var(--border)}
+.cat-filters::-webkit-scrollbar{display:none}
+.cfilter{padding:6px 12px;border-radius:20px;font-size:12px;font-weight:600;color:var(--text2);background:var(--card);white-space:nowrap;border:1px solid var(--border);transition:all .2s}
+.cfilter:active{transform:scale(0.95)}
+.cfilter.active{background:var(--text);color:var(--card);border-color:var(--text)}
+body.fulltext .cat-filters{display:none}
 .tab.d3.active{background:#e8590c}
 .tab.d4.active{background:#7c3aed}
 
@@ -74,7 +82,7 @@ body.fulltext .map-section{height:0}
 .info-card strong{color:var(--text)}
 
 /* ═══ DAY SECTION ═══ */
-.day-section{margin-bottom:28px;scroll-margin-top:120px}
+.day-section{margin-bottom:28px;scroll-margin-top:170px}
 
 .day-header-card{background:var(--card);border-radius:var(--r);padding:18px;margin-bottom:12px;box-shadow:var(--shadow);display:flex;align-items:center;gap:14px}
 .day-badge{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:800;flex-shrink:0}
@@ -113,12 +121,16 @@ body.fulltext .map-section{height:0}
 .ev-actions{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
 .ev-action{display:inline-flex;align-items:center;gap:4px;padding:8px 12px;border-radius:8px;background:var(--bg);font-size:12px;font-weight:600;color:var(--accent);border:1px solid var(--border)}
 .ev-action:active{transform:scale(0.95);background:var(--accent);color:#fff}
-.ev-done-btn{color:var(--green);border-color:var(--green)}
-.ev-done-btn:active{background:var(--green)}
 
-/* Chevron */
-.ev-chevron{position:absolute;right:16px;top:16px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:10px;transition:transform .3s}
+/* Tools cluster: check + chevron, top-right of every card */
+.ev-tools{position:absolute;right:12px;top:12px;display:flex;align-items:center;gap:6px;z-index:2}
+.ev-check{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--border);background:var(--card);color:var(--text3);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.ev-check:active{transform:scale(0.85)}
+.ev.done .ev-check{background:var(--green);border-color:var(--green);color:#fff}
+.ev-chevron{width:20px;height:20px;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:10px;transition:transform .3s}
 .ev.open .ev-chevron{transform:rotate(180deg)}
+/* Room for the cluster so long titles don't run under it */
+.ev-name{padding-right:60px}
 
 /* ═══ SPECIAL BOXES ═══ */
 .flight-box .ev-card{background:linear-gradient(135deg,#fef2f2,#fee2e2);border-left:3px solid #dc2626}
@@ -179,6 +191,7 @@ body.fulltext .map-section{height:0}
   .map-section{position:fixed;top:61px;right:0;width:45%;height:calc(100vh - 61px);z-index:50}
   .map-expand{display:none}
   .day-tabs{max-width:55%;position:sticky;top:61px}
+  .cat-filters{max-width:55%}
   .content{max-width:55%;padding-right:24px}
   /* Full-text mode: map away, text gets the whole window */
   body.fulltext .map-section{width:0;height:calc(100vh - 61px)}
@@ -215,6 +228,17 @@ body.fulltext .map-section{height:0}
   <button class="tab d4" onclick="showDay(4,this)">G4 🌅 Partenza</button>
 </div>
 
+<!-- CATEGORY FILTERS (map) -->
+<div class="cat-filters" id="catFilters">
+  <button class="cfilter active" onclick="filterCat('all',this)">Tutti</button>
+  <button class="cfilter" onclick="filterCat('Mare',this)">🌊 Mare</button>
+  <button class="cfilter" onclick="filterCat('Ristorante',this)">🍽️ Ristoranti</button>
+  <button class="cfilter" onclick="filterCat('Aperitivo',this)">🥂 Aperitivo</button>
+  <button class="cfilter" onclick="filterCat('Dolci',this)">🍡 Dolci</button>
+  <button class="cfilter" onclick="filterCat('Natura',this)">🌋 Natura</button>
+  <button class="cfilter" onclick="filterCat('Monumento',this)">🏰 Monumenti</button>
+</div>
+
 <!-- CONTENT -->
 <div class="content" id="content">
 
@@ -240,13 +264,15 @@ body.fulltext .map-section{height:0}
     <div class="day-badge" style="background:#2563eb">1</div>
     <div class="day-header-text">
       <h2>✈️ Arrivo & Costa Est</h2>
-      <p>Mer 13 Agosto · 🌅 06:29 – 🌇 20:01 · 🌡️ 23-29°C</p>
+      <p>Mer 13 Agosto · 🌅 06:29 – 🌇 20:01 · 🌡️ Media 23-28°C</p>
     </div>
   </div>
   <div class="timeline">
 
+    <div class="tip"><strong>📐 Logistica:</strong> Costa EST. Atterraggio → auto in aeroporto → dammuso (~15 min). Cala Levante e Cala Gadir sono a pochi minuti dal dammuso. Donnafugata ore 18:30 (~10 min).</div>
+
     <div class="ev flight flight-box" data-lat="36.8165" data-lng="11.9686">
-      <div class="ev-card booked"><div class="ev-chevron">▼</div>
+      <div class="ev-card booked"><div class="ev-tools"><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button><span class="ev-chevron">▼</span></div>
         <div class="ev-time">08:10 – 08:50</div>
         <div class="ev-name">✈️ Trapani → Pantelleria <span class="badge">PRENOTATO</span></div>
         <div class="ev-desc">DX1831 · DAT Airlines · 40min · 3 pax</div>
@@ -257,7 +283,7 @@ body.fulltext .map-section{height:0}
     </div>
 
     <div class="ev transport" data-lat="36.8165" data-lng="11.9686">
-      <div class="ev-card booked"><div class="ev-chevron">▼</div>
+      <div class="ev-card booked"><div class="ev-tools"><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button><span class="ev-chevron">▼</span></div>
         <div class="ev-time">09:00</div>
         <div class="ev-name">🚗 Ritiro auto — Sicily By Car <span class="badge">PRENOTATO</span></div>
         <div class="ev-desc">Citroën C3 · Km illimitati · Riconsegna 16/08 ore 18:00</div>
@@ -268,7 +294,7 @@ body.fulltext .map-section{height:0}
     </div>
 
     <div class="ev hotel" data-lat="36.7872" data-lng="12.0487">
-      <div class="ev-card"><div class="ev-chevron">▼</div>
+      <div class="ev-card"><div class="ev-tools"><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button><span class="ev-chevron">▼</span></div>
         <div class="ev-time">09:30</div>
         <div class="ev-name">🏠 Check-in Dammuso</div>
         <div class="ev-desc">Contrada Khamma 109 · Villa 3 camere vista mare · ~15min aeroporto</div>
@@ -282,7 +308,7 @@ body.fulltext .map-section{height:0}
     </div>
 
     <div class="ev beach" data-lat="36.7990" data-lng="12.0470">
-      <div class="ev-card"><div class="ev-chevron">▼</div>
+      <div class="ev-card"><div class="ev-tools"><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button><span class="ev-chevron">▼</span></div>
         <div class="ev-time">10:30 – 12:30</div>
         <div class="ev-name">🌊 Cala Levante + Arco dell'Elefante</div>
         <div class="ev-desc">Primo tuffo! Snorkeling eccellente, vista sull'Arco iconico di Pantelleria</div>
@@ -290,14 +316,13 @@ body.fulltext .map-section{height:0}
           <div class="ev-detail">🐘 L'Arco dell'Elefante visibile dalla baia<br>👟 Scarpette obbligatorie<br>🏊 Fondali bassi → profondi<br>💡 A pochi minuti dal dammuso!</div>
           <div class="ev-actions">
             <a class="ev-action" href="https://www.google.com/maps/search/Cala+Levante+Pantelleria" target="_blank">📍 Maps</a>
-            <button class="ev-action ev-done-btn" onclick="markDone(event)">✓ Fatto</button>
           </div>
         </div>
       </div>
     </div>
 
     <div class="ev food" data-lat="36.7985" data-lng="12.0490">
-      <div class="ev-card"><div class="ev-chevron">▼</div>
+      <div class="ev-card"><div class="ev-tools"><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button><span class="ev-chevron">▼</span></div>
         <div class="ev-time">13:00 – 14:30</div>
         <div class="ev-name">🍽️ Pranzo — Le Cale</div>
         <div class="ev-desc">Terrazza vista Cala Levante · Pesce fresco, capperi e bottarga</div>
@@ -305,14 +330,13 @@ body.fulltext .map-section{height:0}
           <div class="ev-detail">📍 Contrada Cala Levante 34<br>💰 €€-€€€ · ~€30-40/persona<br>🐟 Prenota tavolo fronte mare<br>💡 Stessi proprietari di Sesiventi</div>
           <div class="ev-actions">
             <a class="ev-action" href="https://www.google.com/maps/search/Le+Cale+Pantelleria" target="_blank">📍 Maps</a>
-            <button class="ev-action ev-done-btn" onclick="markDone(event)">✓ Fatto</button>
           </div>
         </div>
       </div>
     </div>
 
     <div class="ev beach" data-lat="36.8121" data-lng="12.0251">
-      <div class="ev-card"><div class="ev-chevron">▼</div>
+      <div class="ev-card"><div class="ev-tools"><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button><span class="ev-chevron">▼</span></div>
         <div class="ev-time">15:00 – 17:00</div>
         <div class="ev-name">♨️ Cala Gadir — Terme naturali</div>
         <div class="ev-desc">Vasche 35-40°C in roccia vulcanica · Gratuite 24/7 · Perfetto nel pomeriggio</div>
@@ -320,14 +344,13 @@ body.fulltext .map-section{height:0}
           <div class="ev-detail">👟 Rocce scivolose — scarpette!<br>💡 Meno gente nel tardo pomeriggio, luce magica</div>
           <div class="ev-actions">
             <a class="ev-action" href="https://www.google.com/maps/search/Cala+Gadir+Pantelleria" target="_blank">📍 Maps</a>
-            <button class="ev-action ev-done-btn" onclick="markDone(event)">✓ Fatto</button>
           </div>
         </div>
       </div>
     </div>
 
     <div class="ev wine" data-lat="36.7980" data-lng="12.0350">
-      <div class="ev-card booked"><div class="ev-chevron">▼</div>
+      <div class="ev-card booked"><div class="ev-tools"><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button><span class="ev-chevron">▼</span></div>
         <div class="ev-time">18:30 – 20:00</div>
         <div class="ev-name">🍇 Donnafugata <span class="badge">PRENOTATO</span></div>
         <div class="ev-desc">Vigneto Zibibbo UNESCO · Tour + 3 vini + Passito Ben Ryè · €280 pagato</div>
@@ -362,7 +385,7 @@ body.fulltext .map-section{height:0}
     <div class="day-badge" style="background:#0891b2">2</div>
     <div class="day-header-text">
       <h2>🌋 Nord-Ovest & Sesiventi Night</h2>
-      <p>Gio 14 Agosto · 🌅 06:30 – 🌇 20:00 · 🌡️ 23-29°C</p>
+      <p>Gio 14 Agosto · 🌅 06:30 – 🌇 20:00 · 🌡️ Media 23-28°C</p>
     </div>
   </div>
   <div class="timeline">
@@ -370,7 +393,7 @@ body.fulltext .map-section{height:0}
     <div class="tip"><strong>📐 Logistica:</strong> Costa NORD-OVEST. Rientro dammuso entro 16:00 → docce 7 persone (1.5h) → Sesiventi ore 19:00 (Mursia, ~20 min dal dammuso).</div>
 
     <div class="ev sight" data-lat="36.8158" data-lng="11.9868">
-      <div class="ev-card"><div class="ev-chevron">▼</div>
+      <div class="ev-card"><div class="ev-tools"><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button><span class="ev-chevron">▼</span></div>
         <div class="ev-time">07:30 – 10:00</div>
         <div class="ev-name">🌋 Specchio di Venere + Fanghi</div>
         <div class="ev-desc">Vai PRESTO! Lago vulcanico + fanghi sulla riva sud. Gratuito</div>
@@ -378,14 +401,13 @@ body.fulltext .map-section{height:0}
           <div class="ev-detail">♨️ Acqua ~40°C · 🧖 Fanghi: spalma + secca al sole<br>⏰ Entro le 8! Poi affollatissimo<br>💡 Zero ombra! Porta acqua + crema solare</div>
           <div class="ev-actions">
             <a class="ev-action" href="https://www.google.com/maps/search/Specchio+di+Venere+Pantelleria" target="_blank">📍 Maps</a>
-            <button class="ev-action ev-done-btn" onclick="markDone(event)">✓ Fatto</button>
           </div>
         </div>
       </div>
     </div>
 
     <div class="ev sight" data-lat="36.8080" data-lng="11.9317">
-      <div class="ev-card"><div class="ev-chevron">▼</div>
+      <div class="ev-card"><div class="ev-tools"><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button><span class="ev-chevron">▼</span></div>
         <div class="ev-time">10:15 – 11:00</div>
         <div class="ev-name">🏰 Sesi di Mursia</div>
         <div class="ev-desc">Tombe megalitiche Età del Bronzo · 50+ monumenti · Gratuito</div>
@@ -393,7 +415,6 @@ body.fulltext .map-section{height:0}
           <div class="ev-detail">🏛️ Uniche nel Mediterraneo · ⏱️ ~30-45 min<br>💡 Sesiventi è vicino — ricognizione per stasera!</div>
           <div class="ev-actions">
             <a class="ev-action" href="https://www.google.com/maps/search/Sesi+di+Mursia+Pantelleria" target="_blank">📍 Maps</a>
-            <button class="ev-action ev-done-btn" onclick="markDone(event)">✓ Fatto</button>
           </div>
         </div>
       </div>
@@ -416,7 +437,7 @@ body.fulltext .map-section{height:0}
     </div>
 
     <div class="ev transport">
-      <div class="ev-card">
+      <div class="ev-card"><div class="ev-tools"><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button></div>
         <div class="ev-time">15:30</div>
         <div class="ev-name">🚗 Rientro + 🚿 Docce</div>
         <div class="ev-desc">~20 min dalla costa ovest. 7 persone = preparatevi per Sesiventi! Eleganti!</div>
@@ -424,7 +445,7 @@ body.fulltext .map-section{height:0}
     </div>
 
     <div class="ev aperitivo yacht-box" data-lat="36.8050" data-lng="11.9350">
-      <div class="ev-card booked"><div class="ev-chevron">▼</div>
+      <div class="ev-card booked"><div class="ev-tools"><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button><span class="ev-chevron">▼</span></div>
         <div class="ev-time">19:00 – tardi</div>
         <div class="ev-name">🥂 Sesiventi — Rooftop + DJ + DISCO <span class="badge">PRENOTATO</span></div>
         <div class="ev-desc">€40/pers · Drink + piatto (porzioni ENORMI = è la vostra cena!)</div>
@@ -451,7 +472,7 @@ body.fulltext .map-section{height:0}
     <div class="day-badge" style="background:#e8590c">3</div>
     <div class="day-header-text">
       <h2>⛵ Yacht Day & Ferragosto</h2>
-      <p>Ven 15 Agosto (FERRAGOSTO) · 🌅 06:30 – 🌇 19:59 · 🌡️ 23-29°C</p>
+      <p>Ven 15 Agosto (FERRAGOSTO) · 🌅 06:30 – 🌇 19:59 · 🌡️ Media 24-28°C</p>
     </div>
   </div>
   <div class="timeline">
@@ -459,7 +480,7 @@ body.fulltext .map-section{height:0}
     <div class="tip"><strong>📐 Logistica:</strong> Yacht 09:30–17:00 (porto Centro). Rientro dammuso 17:15. Docce 17:15–19:00. Cena Da Pina ore 21:30 (~15 min nord).</div>
 
     <div class="ev sight yacht-box" data-lat="36.8290" data-lng="11.9440">
-      <div class="ev-card booked"><div class="ev-chevron">▼</div>
+      <div class="ev-card booked"><div class="ev-tools"><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button><span class="ev-chevron">▼</span></div>
         <div class="ev-time">09:00 ⚠️</div>
         <div class="ev-name">📍 Ritrovo 30 MIN PRIMA <span class="badge">PRENOTATO</span></div>
         <div class="ev-desc">Lungomare Borsellino 84 · Non perdere il turno!</div>
@@ -473,7 +494,7 @@ body.fulltext .map-section{height:0}
     </div>
 
     <div class="ev sight yacht-box" data-lat="36.785" data-lng="11.985">
-      <div class="ev-card booked"><div class="ev-chevron">▼</div>
+      <div class="ev-card booked"><div class="ev-tools"><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button><span class="ev-chevron">▼</span></div>
         <div class="ev-time">09:30 – 17:00</div>
         <div class="ev-name">⛵ Tour Isola in Yacht <span class="badge">PRENOTATO</span></div>
         <div class="ev-desc">Circumnavigazione completa · Cale, grotte, pranzo a bordo · 7 biglietti</div>
@@ -487,7 +508,7 @@ body.fulltext .map-section{height:0}
     </div>
 
     <div class="ev transport">
-      <div class="ev-card">
+      <div class="ev-card"><div class="ev-tools"><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button></div>
         <div class="ev-time">17:00 – 19:00</div>
         <div class="ev-name">🚗 Rientro + 🚿 Docce</div>
         <div class="ev-desc">Porto → dammuso ~15 min · 1h45 per 7 persone · Vestitevi per uscire!</div>
@@ -495,7 +516,7 @@ body.fulltext .map-section{height:0}
     </div>
 
     <div class="ev food" data-lat="36.8130" data-lng="11.9840">
-      <div class="ev-card booked"><div class="ev-chevron">▼</div>
+      <div class="ev-card booked"><div class="ev-tools"><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button><span class="ev-chevron">▼</span></div>
         <div class="ev-time">21:30 – 23:00</div>
         <div class="ev-name">🍽️ Trattoria da Pina <span class="badge">PRENOTATO</span></div>
         <div class="ev-desc">Ravioli panteschi (ricotta+menta) · Stufato · Travelers' Choice</div>
@@ -509,7 +530,7 @@ body.fulltext .map-section{height:0}
     </div>
 
     <div class="ev aperitivo">
-      <div class="ev-card">
+      <div class="ev-card"><div class="ev-tools"><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button></div>
         <div class="ev-time">23:00 – tardi</div>
         <div class="ev-name">🎶 Notte di Ferragosto!</div>
         <div class="ev-desc">Tutta l'isola in strada · Alta Marea (Scauri, fino 7:00) o eventi in piazza</div>
@@ -530,10 +551,12 @@ body.fulltext .map-section{height:0}
     <div class="day-badge" style="background:#7c3aed">4</div>
     <div class="day-header-text">
       <h2>🌅 Ultimo Tuffo & Partenza</h2>
-      <p>Sab 16 Agosto · 🌅 06:31 – 🌇 19:58 · 🌡️ 23-29°C</p>
+      <p>Sab 16 Agosto · 🌅 06:31 – 🌇 19:58 · 🌡️ Media 24-29°C</p>
     </div>
   </div>
   <div class="timeline">
+
+    <div class="tip"><strong>📐 Logistica:</strong> Check-out dammuso + centro città. Riconsegna auto ore 17:00 in aeroporto → volo 18:20 (essere in aeroporto ~1h prima). Tutto il giorno resta a nord/centro.</div>
 
     <div class="alt">
       <div class="alt-label">⚡ MATTINA</div>
@@ -544,7 +567,7 @@ body.fulltext .map-section{height:0}
     </div>
 
     <div class="ev food" data-lat="36.8295" data-lng="11.9425">
-      <div class="ev-card"><div class="ev-chevron">▼</div>
+      <div class="ev-card"><div class="ev-tools"><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button><span class="ev-chevron">▼</span></div>
         <div class="ev-time">10:30 – 11:30</div>
         <div class="ev-name">🍡 Pasticceria Katia + Panificio Marrone</div>
         <div class="ev-desc">Granite, baci panteschi, gelato (#1 isola) · Focaccia e cannoli da portare</div>
@@ -552,7 +575,6 @@ body.fulltext .map-section{height:0}
           <div class="ev-detail">📍 Katia: Lungomare Borsellino · ⭐ 4.5/5 (794 rec.)<br>🍡 Bacio pantesco, granita gelsi, pistacchio<br>📍 Marrone: Via Borgo Italia<br>💡 Prendi qualcosa per l'aereo!</div>
           <div class="ev-actions">
             <a class="ev-action" href="https://www.google.com/maps/search/Pasticceria+Katia+Pantelleria" target="_blank">📍 Maps</a>
-            <button class="ev-action ev-done-btn" onclick="markDone(event)">✓ Fatto</button>
           </div>
         </div>
       </div>
@@ -567,7 +589,7 @@ body.fulltext .map-section{height:0}
     </div>
 
     <div class="ev sight" data-lat="36.8290" data-lng="11.9440">
-      <div class="ev-card"><div class="ev-chevron">▼</div>
+      <div class="ev-card"><div class="ev-tools"><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button><span class="ev-chevron">▼</span></div>
         <div class="ev-time">13:30 – 14:30</div>
         <div class="ev-name">🛍️ Ultimo shopping — Centro</div>
         <div class="ev-desc">Castello Barbacane · La Nicchia (capperi) · Caffè Aurora (granite)</div>
@@ -575,14 +597,13 @@ body.fulltext .map-section{height:0}
           <div class="ev-detail">🏰 Castello: fortezza medievale, gratis<br>🛍️ La Nicchia: capperi, conserve top<br>🍷 Passito: Ben Ryè o Coste Ghirlanda<br>☕ Aurora: granite storiche</div>
           <div class="ev-actions">
             <a class="ev-action" href="https://www.google.com/maps/search/Castello+Barbacane+Pantelleria" target="_blank">📍 Maps</a>
-            <button class="ev-action ev-done-btn" onclick="markDone(event)">✓ Fatto</button>
           </div>
         </div>
       </div>
     </div>
 
     <div class="ev transport">
-      <div class="ev-card booked">
+      <div class="ev-card booked"><div class="ev-tools"><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button></div>
         <div class="ev-time">17:00</div>
         <div class="ev-name">🚗 Riconsegna auto <span class="badge">PRENOTATO</span></div>
         <div class="ev-desc">Sicily By Car · Aeroporto PNL · Controlla carburante!</div>
@@ -590,7 +611,7 @@ body.fulltext .map-section{height:0}
     </div>
 
     <div class="ev flight flight-box" data-lat="36.8165" data-lng="11.9686">
-      <div class="ev-card booked"><div class="ev-chevron">▼</div>
+      <div class="ev-card booked"><div class="ev-tools"><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button><span class="ev-chevron">▼</span></div>
         <div class="ev-time">18:20 – 19:00</div>
         <div class="ev-name">✈️ Pantelleria → Trapani <span class="badge">PRENOTATO</span></div>
         <div class="ev-desc">DX1836 · DAT Airlines · 40min · Arriva 1h prima</div>
@@ -658,7 +679,24 @@ var plannedDays={
 // ═══════════════════════════════════════════════════════════════
 var catColors={Visite:"#bfdbfe",Cibo:"#fed7aa",Aperitivo:"#fde68a",Dolci:"#fbcfe8",Hotel:"#c4b5fd"};
 var subIcons={Natura:"🌋",Mare:"🌊",Monumento:"🏰",Ristorante:"🍽️",Trattoria:"🍜",Pizzeria:"🍕","Beach Bar":"🏖️",Panificio:"🥖","Aperitivo Bar":"🥂",Vigneto:"🍇",Pasticceria:"🍡",Hotel:"🏨"};
-var map,placeLayer,routeLayer,curDay='all';
+var map,placeLayer,routeLayer,curDay='all',curCat='all';
+// Filter keys map to either a category (cat) or a subcategory (sub).
+// "Ristorante" deliberately includes trattorie and pizzerie — all places to eat.
+var catGroups={
+  Mare:{sub:['Mare','Beach Bar']},
+  Ristorante:{sub:['Ristorante','Trattoria','Pizzeria']},
+  Aperitivo:{cat:['Aperitivo']},
+  Dolci:{cat:['Dolci'],sub:['Pasticceria','Panificio']},
+  Natura:{sub:['Natura']},
+  Monumento:{sub:['Monumento']}
+};
+function matchCat(p){
+  if(curCat==='all')return true;
+  var g=catGroups[curCat];if(!g)return true;
+  if(g.cat&&g.cat.indexOf(p.cat)!==-1)return true;
+  if(g.sub&&g.sub.indexOf(p.sub)!==-1)return true;
+  return false;
+}
 var userLat=null,userLng=null,gpsActive=false,gpsWatchId=null,gpsMarker=null,gpsCircle=null;
 
 function initMap(){
@@ -680,6 +718,7 @@ function renderMap(){
   places.forEach(function(p){
     var pd=getPlanned(p);
     if(curDay!=='all'&&pd.indexOf(curDay)===-1)return;
+    if(!matchCat(p))return;
     var bg=catColors[p.cat]||'#e2e8f0';
     var ic=subIcons[p.sub]||'📌';
     var cls='emark'+(pd.length?' planned':'');
@@ -721,11 +760,26 @@ function showDay(d,btn){
   if(d!=='all'){document.getElementById('day'+d).scrollIntoView({behavior:'smooth',block:'start'});}
 }
 
+// Category filters — map only, itinerary text is untouched
+function filterCat(c,btn){
+  curCat=c;
+  document.querySelectorAll('.cfilter').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  renderMap();
+  // Filtering is pointless if the map is a 200px strip — open it up
+  var ms=document.getElementById('mapSection');
+  if(c!=='all'&&!ms.classList.contains('expanded')){
+    ms.classList.add('expanded');mapExpanded=true;
+    document.getElementById('mapIcon').textContent='▲';
+    setTimeout(function(){map.invalidateSize();renderMap();},400);
+  }
+}
+
 // Expand cards
 document.addEventListener('click',function(e){
   var ev=e.target.closest('.ev');
   if(!ev||!ev.querySelector('.ev-expand'))return;
-  if(e.target.closest('a')||e.target.closest('.ev-done-btn'))return;
+  if(e.target.closest('a')||e.target.closest('.ev-check'))return;
   // In full text mode, don't collapse cards
   if(fullText)return;
   // Close other open cards
@@ -755,19 +809,22 @@ function markDone(e){
   if(ev)ev.classList.toggle('done');
   saveDoneState();
 }
+// Index-based key: 4 cards have no coordinates, so lat/lng alone would collide
+function evKey(el,i){
+  var t=el.querySelector('.ev-time'),n=el.querySelector('.ev-name');
+  return i+'|'+(t?t.textContent:'')+'|'+(n?n.textContent.slice(0,20):'');
+}
 function saveDoneState(){
   var done={};
-  document.querySelectorAll('.ev.done').forEach(function(el,i){
-    var id=el.dataset.lat+','+el.dataset.lng+(el.querySelector('.ev-time')?el.querySelector('.ev-time').textContent:'');
-    done[id]=1;
+  document.querySelectorAll('.ev').forEach(function(el,i){
+    if(el.classList.contains('done'))done[evKey(el,i)]=1;
   });
   localStorage.setItem('pantelleria_done',JSON.stringify(done));
 }
 function restoreDoneState(){
   var done=JSON.parse(localStorage.getItem('pantelleria_done')||'{}');
-  document.querySelectorAll('.ev').forEach(function(el){
-    var id=el.dataset.lat+','+el.dataset.lng+(el.querySelector('.ev-time')?el.querySelector('.ev-time').textContent:'');
-    if(done[id])el.classList.add('done');
+  document.querySelectorAll('.ev').forEach(function(el,i){
+    if(done[evKey(el,i)])el.classList.add('done');
   });
 }
 restoreDoneState();
