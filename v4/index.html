@@ -81,6 +81,30 @@ body.fulltext .cat-filters{display:none}
 .info-card p{font-size:13px;color:var(--text2);margin-bottom:6px;line-height:1.6}
 .info-card strong{color:var(--text)}
 
+/* Card richiudibili: il tap sull'intestazione apre/chiude il corpo */
+.info-card.collapsible{padding:0;overflow:hidden}
+.ic-hdr{display:flex;align-items:center;gap:10px;padding:16px 18px;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
+.ic-hdr h2{flex:1;margin-bottom:0}
+.ic-chevron{width:20px;height:20px;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:10px;transition:transform .3s;flex-shrink:0}
+.info-card.collapsible .ic-body{padding:0 18px 16px}
+/* max-height invece di display:none, così la transizione è fluida */
+.info-card.collapsible.closed .ic-body{max-height:0;padding-top:0;padding-bottom:0;opacity:0;overflow:hidden}
+.info-card.collapsible .ic-body{max-height:1400px;opacity:1;transition:max-height .35s ease,opacity .25s ease,padding .35s ease}
+.info-card.collapsible.closed .ic-chevron{transform:rotate(-90deg)}
+.info-card.collapsible.closed .ic-hdr{padding-bottom:16px}
+
+/* Titolo dell'appendice in fondo alla pagina */
+.appendix-title{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin:28px 0 12px;padding-left:2px}
+
+/* Istruzioni di installazione: un blocco per sistema operativo */
+.inst{background:var(--bg);border-radius:var(--r-sm);padding:12px 14px;margin:10px 0}
+.inst-hdr{font-size:13px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:7px}
+.inst-ico{font-size:15px}
+.inst ol{margin:0;padding-left:20px}
+.inst li{font-size:12.5px;color:var(--text2);line-height:1.65;margin-bottom:5px}
+.inst-note{font-size:12px;color:var(--text3);line-height:1.6;margin-top:10px}
+.inst-link{display:inline-block;margin-top:10px;font-size:12.5px;font-weight:600}
+
 /* ═══ DAY SECTION ═══ */
 .day-section{margin-bottom:28px;scroll-margin-top:170px}
 
@@ -232,6 +256,13 @@ body.fulltext .cat-filters{display:none}
   /* Always print ALL 4 days, even if a day tab filter is active
      (showDay sets inline display:none — !important overrides it) */
   .day-section,.info-card{display:block!important}
+  /* Su carta niente pieghevoli: tutto aperto e leggibile */
+  .info-card.collapsible.closed .ic-body{max-height:none!important;opacity:1!important;padding:0 18px 16px!important;overflow:visible!important}
+  .ic-chevron{display:none!important}
+  .inst{border:1px solid #ccc;background:#fff!important}
+  /* Il link al PDF non serve su carta — sei già sulla carta */
+  .inst-link{display:none!important}
+  .appendix-title{color:#000!important;page-break-before:always}
   /* Keep a day and its cards together where possible */
   .day-section{page-break-inside:auto;break-inside:auto;margin-bottom:14px;animation:none!important;opacity:1!important;transform:none!important}
   .day-header-card{page-break-after:avoid;break-after:avoid;border:1px solid #999;border-radius:6px;padding:10px}
@@ -322,59 +353,49 @@ body.fulltext .cat-filters{display:none}
 </div>
 
 <!-- INFO -->
-<div class="info-card" id="infoCard">
-  <h2>📋 Da sapere</h2>
+<div class="info-card collapsible" id="infoCard">
+  <div class="ic-hdr" onclick="toggleInfo(this)">
+    <h2>📋 Da sapere</h2>
+    <span class="ic-chevron">▼</span>
+  </div>
+  <div class="ic-body">
   <p>🚗 <strong>Auto a noleggio indispensabile</strong> — niente bus. Da un capo all'altro: 30 min.</p>
   <p>📞 <strong>Prenota TUTTO</strong> — ristoranti 2-3 giorni prima. Molti solo telefono/WhatsApp.</p>
   <p>👟 <strong>Scarpette da scoglio</strong> — zero spiagge di sabbia. Solo roccia vulcanica.</p>
   <p>🤿 <strong>Maschera + boccaglio</strong> — fondali incredibili ovunque.</p>
+  </div>
 </div>
 
 <!-- AREE -->
-<div class="info-card">
-  <h2>🧭 L'isola per zone — così non fate avanti e indietro</h2>
+<div class="info-card collapsible" id="areeCard">
+  <div class="ic-hdr" onclick="toggleInfo(this)">
+    <h2>🧭 L'isola per zone — così non fate avanti e indietro</h2>
+    <span class="ic-chevron">▼</span>
+  </div>
+  <div class="ic-body">
   <p>Pantelleria è piccola (30 min da un capo all'altro) ma le strade sono lente. Il programma è costruito per zone: <strong>un giorno = una zona</strong>.</p>
   <p>🔵 <strong>G1 — EST (Khamma, Tracino, Gadir)</strong>: dove dormite. Cala Levante, Cala Tramontana, l'Arco, le terme di Gadir, Donnafugata, Acquamore, Da Andrea. Tutto entro 10 min dal dammuso.</p>
   <p>🟦 <strong>G2 — NORD e OVEST (Mursia, Scauri, Sibà)</strong>: Lago di Venere, Sesi, Bue Marino, Satarìa, Benikulà, il gelato di Ulisse a Scauri, Sesiventi.</p>
   <p>🟠 <strong>G3 — MARE</strong>: la giornata in yacht copre tutta la costa dal mare. La sera si torna a nord per Da Pina.</p>
   <p>🟣 <strong>G4 — NORD e CENTRO</strong>: vicino all'aeroporto. Laghetto delle Ondine, Punta Spadillo, Bue Marino, il centro per i regali.</p>
   <p>💡 <strong>Le zone che restano fuori</strong>: il SUD selvaggio (Balata dei Turchi, Martingana, Punta Li Marsi) e l'ALTOPIANO (Montagna Grande, Bosco delle Fate, Monte Gibele). Li vedrete dal mare il giorno 3 — se volete andarci a piedi serve mezza giornata dedicata.</p>
+  </div>
 </div>
 
 <!-- VENTO -->
-<div class="info-card">
-  <h2>🌬️ Dove fare il bagno in base al vento</h2>
+<div class="info-card collapsible closed" id="ventoCard">
+  <div class="ic-hdr" onclick="toggleInfo(this)">
+    <h2>🌬️ Dove fare il bagno in base al vento</h2>
+    <span class="ic-chevron">▼</span>
+  </div>
+  <div class="ic-body">
   <p>Su Pantelleria il vento decide tutto. Guarda da dove soffia <em>la mattina</em> e scegli la costa opposta.</p>
   <p>🔥 <strong>Scirocco</strong> (da SUD-EST) → vai a NORD: Cala Cinque Denti, Khattibuale, Cala Karuscia.</p>
   <p>🌡️ <strong>Vento da SUD</strong> → Bue Marino, la cala preferita dai panteschi (scalinata, fondale graduale).</p>
   <p>❄️ <strong>Maestrale</strong> (da NORD-OVEST) → vai a SUD: Balata dei Turchi è al suo meglio proprio col maestrale.</p>
   <p>🌊 <strong>Mare mosso / mareggiata</strong> → Laghetto delle Ondine: sono le onde a ricambiare l'acqua. Con mare piatto è stagnante.</p>
   <p>😌 <strong>Zero vento</strong> → Cala Levante, Cala Tramontana, Gadir. E le terme funzionano sempre.</p>
-</div>
-
-<!-- DA MANGIARE -->
-<div class="info-card">
-  <h2>🍽️ Da mangiare e bere assolutamente</h2>
-  <p>🫐 <strong>Capperi di Pantelleria IGP</strong> — conservati SOLO sotto sale marino, non in aceto. Chiedili nell'insalata, sui crudi, nella sciakisciuka.</p>
-  <p>🥗 <strong>Insalata pantesca</strong> — patate, pomodoro, cipolla, olive, origano e capperi. Il piatto dell'isola.</p>
-  <p>🥟 <strong>Ravioli panteschi</strong> — ricotta fresca e menta, conditi col sugo. Da Il Cappero o da asporto al Forno Mangiaforte.</p>
-  <p>💋 <strong>Bacio pantesco</strong> — due dischi di sfoglia con ricotta in mezzo. Da Katia o Acquamore.</p>
-  <p>🍰 <strong>Cassata pantesca</strong> — al Forno Mangiaforte (via Silvio Pellico), cinque generazioni di fornai.</p>
-  <p>🍨 <strong>Gelato al cappero, al basilico, al fico d'India</strong> — Il gelato di Ulisse, a Scauri.</p>
-  <p>🍚 <strong>Arancini</strong> — Panificio Marrone e Mangiaforte, gusti diversi ogni giorno.</p>
-  <p>🥘 <strong>Cous cous pantesco</strong> — di pesce, con verdure fritte. Trattoria Runcune o Le Cale.</p>
-  <p>🍷 <strong>Passito di Pantelleria</strong> — da zibibbo, vite ad alberello patrimonio UNESCO. Ben Ryè di Donnafugata.</p>
-</div>
-
-<!-- CAPPERI -->
-<div class="info-card">
-  <h2>🫐 La raccolta dei capperi — e siamo nel periodo giusto</h2>
-  <p>📅 <strong>Da fine maggio a settembre</strong>: agosto è pieno periodo di raccolta, la vedrete davvero.</p>
-  <p>🌅 <strong>Si raccoglie PRIMA DELL'ALBA</strong> — i boccioli vanno colti ancora chiusi, appena germogliati. Con il sole alto si aprono e non valgono più.</p>
-  <p>✋ <strong>Tutto a mano</strong>, bocciolo per bocciolo, ogni pochi giorni sulla stessa pianta. I più piccoli danno il prodotto migliore.</p>
-  <p>🧂 <strong>Sotto sale, mai in aceto</strong>: ~10 giorni con sale al 40% del peso, poi si rigira e si ripete al 20% per altri 10 giorni. Freschi sono amarissimi.</p>
-  <p>🏅 <strong>IGP dal 1996</strong> — è l'unico cappero italiano a marchio protetto.</p>
-  <p>💡 <strong>Da fare:</strong> passa alla Cooperativa Capperi o all'Emporio del Gusto e chiedi di vedere la cernita e la salatura.</p>
+  </div>
 </div>
 
 <!-- DAY 1 -->
@@ -595,9 +616,9 @@ body.fulltext .cat-filters{display:none}
 
     <div class="ev transport">
       <div class="ev-card"><div class="ev-tools"><a class="ev-map-icon" href="https://www.google.com/maps/search/Contrada+Khamma+109+Pantelleria" target="_blank" title="Apri in Maps" onclick="event.stopPropagation()">📍</a><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button></div>
-        <div class="ev-time">15:30</div>
+        <div class="ev-time">16:30</div>
         <div class="ev-name">🚗 Rientro + 🚿 Docce</div>
-        <div class="ev-desc">~20 min dalla costa ovest. 7 persone = preparatevi per Sesiventi! Eleganti!</div>
+        <div class="ev-desc">~20 min dalla costa ovest. Restano 2 ore piene per 7 persone — tempo di sopravanzo per Sesiventi. Eleganti!</div>
       </div>
     </div>
 
@@ -810,6 +831,77 @@ body.fulltext .cat-filters{display:none}
   </div>
 </div>
 
+<!-- APPENDICE -->
+<div class="appendix-title">📖 Da leggere con calma</div>
+<!-- DA MANGIARE -->
+<div class="info-card collapsible closed" id="mangiareCard">
+  <div class="ic-hdr" onclick="toggleInfo(this)">
+    <h2>🍽️ Da mangiare e bere assolutamente</h2>
+    <span class="ic-chevron">▼</span>
+  </div>
+  <div class="ic-body">
+  <p>🫐 <strong>Capperi di Pantelleria IGP</strong> — conservati SOLO sotto sale marino, non in aceto. Chiedili nell'insalata, sui crudi, nella sciakisciuka.</p>
+  <p>🥗 <strong>Insalata pantesca</strong> — patate, pomodoro, cipolla, olive, origano e capperi. Il piatto dell'isola.</p>
+  <p>🥟 <strong>Ravioli panteschi</strong> — ricotta fresca e menta, conditi col sugo. Da Il Cappero o da asporto al Forno Mangiaforte.</p>
+  <p>💋 <strong>Bacio pantesco</strong> — due dischi di sfoglia con ricotta in mezzo. Da Katia o Acquamore.</p>
+  <p>🍰 <strong>Cassata pantesca</strong> — al Forno Mangiaforte (via Silvio Pellico), cinque generazioni di fornai.</p>
+  <p>🍨 <strong>Gelato al cappero, al basilico, al fico d'India</strong> — Il gelato di Ulisse, a Scauri.</p>
+  <p>🍚 <strong>Arancini</strong> — Panificio Marrone e Mangiaforte, gusti diversi ogni giorno.</p>
+  <p>🥘 <strong>Cous cous pantesco</strong> — di pesce, con verdure fritte. Trattoria Runcune o Le Cale.</p>
+  <p>🍷 <strong>Passito di Pantelleria</strong> — da zibibbo, vite ad alberello patrimonio UNESCO. Ben Ryè di Donnafugata.</p>
+  </div>
+</div>
+
+<!-- CAPPERI -->
+<div class="info-card collapsible closed" id="capperiCard">
+  <div class="ic-hdr" onclick="toggleInfo(this)">
+    <h2>🫐 La raccolta dei capperi — e siamo nel periodo giusto</h2>
+    <span class="ic-chevron">▼</span>
+  </div>
+  <div class="ic-body">
+  <p>📅 <strong>Da fine maggio a settembre</strong>: agosto è pieno periodo di raccolta, la vedrete davvero.</p>
+  <p>🌅 <strong>Si raccoglie PRIMA DELL'ALBA</strong> — i boccioli vanno colti ancora chiusi, appena germogliati. Con il sole alto si aprono e non valgono più.</p>
+  <p>✋ <strong>Tutto a mano</strong>, bocciolo per bocciolo, ogni pochi giorni sulla stessa pianta. I più piccoli danno il prodotto migliore.</p>
+  <p>🧂 <strong>Sotto sale, mai in aceto</strong>: ~10 giorni con sale al 40% del peso, poi si rigira e si ripete al 20% per altri 10 giorni. Freschi sono amarissimi.</p>
+  <p>🏅 <strong>IGP dal 1996</strong> — è l'unico cappero italiano a marchio protetto.</p>
+  <p>💡 <strong>Da fare:</strong> passa alla Cooperativa Capperi o all'Emporio del Gusto e chiedi di vedere la cernita e la salatura.</p>
+  </div>
+</div>
+
+<!-- INSTALLA -->
+<div class="info-card collapsible closed" id="installCard">
+  <div class="ic-hdr" onclick="toggleInfo(this)">
+    <h2>📲 Metti l'app sul telefono</h2>
+    <span class="ic-chevron">▼</span>
+  </div>
+  <div class="ic-body">
+    <p>Aggiungila alla schermata Home e si apre come una vera app, a schermo pieno, senza barra del browser. Fallo <strong>prima di partire</strong>, mentre hai il wifi.</p>
+
+    <div class="inst">
+      <div class="inst-hdr"><span class="inst-ico"></span> iPhone / iPad — con <strong>Safari</strong></div>
+      <ol>
+        <li>Apri questa pagina in <strong>Safari</strong> (non funziona con Chrome su iPhone)</li>
+        <li>Tocca il tasto <strong>Condividi</strong> in basso al centro: il quadrato con la freccia verso l'alto</li>
+        <li>Scorri la lista verso il basso e tocca <strong>“Aggiungi alla schermata Home”</strong></li>
+        <li>Dai il nome che vuoi (es. <em>Pantelleria</em>) e tocca <strong>Aggiungi</strong></li>
+      </ol>
+    </div>
+
+    <div class="inst">
+      <div class="inst-hdr"><span class="inst-ico">🤖</span> Android — con <strong>Chrome</strong></div>
+      <ol>
+        <li>Apri questa pagina in <strong>Chrome</strong></li>
+        <li>Tocca i <strong>tre puntini ⋮</strong> in alto a destra</li>
+        <li>Tocca <strong>“Aggiungi a schermata Home”</strong> (o “Installa app”, se compare)</li>
+        <li>Conferma con <strong>Aggiungi</strong> / <strong>Installa</strong></li>
+      </ol>
+    </div>
+
+    <p class="inst-note">⚠️ Su Pantelleria il segnale va e viene, soprattutto verso sud e in montagna. <strong>Apri l'app una volta col wifi prima di uscire</strong> di casa: le mappe che hai già visto restano in memoria. Se vuoi la sicurezza totale, tieni anche il <strong>PDF</strong> salvato nei File del telefono.</p>
+    <a class="inst-link" href="Pantelleria-2026.pdf" target="_blank">📄 Apri il PDF stampabile</a>
+  </div>
+</div>
+
 </div><!-- /content -->
 
 <script>
@@ -1009,9 +1101,18 @@ function showDay(d,btn){
   btn.classList.add('active');
   document.querySelectorAll('.day-section').forEach(function(s){s.style.display=(d==='all'||s.dataset.day==d)?'':'none';});
   document.getElementById('countdownCard').style.display=d==='all'?'':'none';
-  document.getElementById('infoCard').style.display=d==='all'?'':'none';
+  ['infoCard','areeCard','ventoCard','mangiareCard','capperiCard','installCard'].forEach(function(id){
+    document.getElementById(id).style.display=d==='all'?'':'none';
+  });
+  var ap=document.querySelector('.appendix-title');
+  if(ap)ap.style.display=d==='all'?'':'none';
   renderMap();
   if(d!=='all'){document.getElementById('day'+d).scrollIntoView({behavior:'smooth',block:'start'});}
+}
+
+// Info card apri/chiudi
+function toggleInfo(hdr){
+  hdr.parentNode.classList.toggle('closed');
 }
 
 // Category filters — map only, itinerary text is untouched
