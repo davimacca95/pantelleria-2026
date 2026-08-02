@@ -154,6 +154,8 @@ body.fulltext .cat-filters{display:none}
 /* Maps as an icon in the corner cluster — adds no height to the card */
 .ev-map-icon{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--border);background:var(--card);font-size:13px;display:flex;align-items:center;justify-content:center;text-decoration:none;flex-shrink:0}
 .ev-map-icon:active{transform:scale(0.85);background:var(--accent)}
+.ev-map-icon.call{background:var(--green);border-color:var(--green)}
+.ev-tools{flex-wrap:wrap;justify-content:flex-end;max-width:150px}
 
 /* Tools cluster: check + chevron, top-right of every card */
 .ev-tools{position:absolute;right:12px;top:12px;display:flex;align-items:center;gap:6px;z-index:2}
@@ -163,8 +165,8 @@ body.fulltext .cat-filters{display:none}
 .ev-chevron{width:20px;height:20px;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:10px;transition:transform .3s}
 .ev.open .ev-chevron{transform:rotate(180deg)}
 /* Room for the cluster (📍 + ✓ + chevron) so titles don't run under it */
-.ev-name{padding-right:96px}
-.ev-time{padding-right:96px}
+.ev-name{padding-right:150px}
+.ev-time{padding-right:150px}
 
 /* ═══ SPECIAL BOXES ═══ */
 .flight-box .ev-card{background:linear-gradient(135deg,#fef2f2,#fee2e2);border-left:3px solid #dc2626}
@@ -209,6 +211,7 @@ body.fulltext .cat-filters{display:none}
 .alt-opt h4 .alt-dot{flex-shrink:0}
 .alt-map-icon{margin-left:auto;width:26px;height:26px;border-radius:50%;border:1.5px solid var(--border);background:var(--bg);font-size:13px;display:flex;align-items:center;justify-content:center;text-decoration:none;flex-shrink:0}
 .alt-map-icon:active{transform:scale(0.85);background:var(--accent)}
+.alt-map-icon.call{background:var(--green);border-color:var(--green);margin-left:5px}
 
 /* A third alternative makes the 2-column grid uneven — let it wrap instead */
 .alt-grid.three{grid-template-columns:1fr 1fr 1fr}
@@ -565,30 +568,30 @@ body.fulltext .cat-filters{display:none}
     </div>
 
     <div class="ev transport" data-lat="36.8165" data-lng="11.9686" data-ico="🚗">
-      <div class="ev-card booked"><div class="ev-tools"><a class="ev-map-icon" href="https://www.google.com/maps/search/Aeroporto+di+Pantelleria" target="_blank" title="Apri in Google Maps" onclick="event.stopPropagation()">📍</a><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button><span class="ev-chevron">▼</span></div>
+      <div class="ev-card booked"><div class="ev-tools"><a class="ev-map-icon call" href="tel:+390923912940" onclick="event.stopPropagation()" aria-label="Chiama Sicily By Car — Aeroporto" title="Chiama Sicily By Car — Aeroporto">📞</a><a class="ev-map-icon" href="https://www.google.com/maps/search/Aeroporto+di+Pantelleria" target="_blank" title="Apri in Google Maps" onclick="event.stopPropagation()">📍</a><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button><span class="ev-chevron">▼</span></div>
         <div class="ev-time">09:00</div>
         <div class="ev-name">Ritiro auto — Sicily By Car <span class="badge">PRENOTATO</span></div>
         <div class="ev-desc">Citroën C3 · Km illimitati · Riconsegna 16/08 ore 18:00</div>
         <div class="ev-expand">
-          <div class="ev-detail">🗺️ Via Madonna della Margana, PNL<br>📞 +39 0923 912940<br>🎫 Ref: 757392604 · IT588008819<br>💳 Deposito €200 · Franchigia €1.464<br>⛽ Restituire stesso livello</div>
+          <div class="ev-detail">🗺️ Via Madonna della Margana, PNL<br>📞 <a href="tel:+390923912940">+39 0923 912940</a><br>🎫 Ref: 757392604 · IT588008819<br>💳 Deposito €200 · Franchigia €1.464<br>⛽ Restituire stesso livello</div>
         </div>
       </div>
     </div>
 
     <div class="ev hotel" data-lat="36.7872" data-lng="12.0487" data-ico="🏠">
-      <div class="ev-card"><div class="ev-tools"><a class="ev-map-icon" href="https://www.google.com/maps/dir/?api=1&destination=36.7872,12.0487" target="_blank" title="Apri in Google Maps" onclick="event.stopPropagation()">📍</a><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button><span class="ev-chevron">▼</span></div>
+      <div class="ev-card"><div class="ev-tools"><button class="ev-map-icon" onclick="event.stopPropagation();aFocus('dammuso-hotel')" aria-label="Mostra Dammuso (Hotel) sulla mappa qui sopra" title="Mostra sulla mappa qui sopra">🧭</button><a class="ev-map-icon" href="https://www.google.com/maps/dir/?api=1&destination=36.7872,12.0487" target="_blank" title="Apri in Google Maps" onclick="event.stopPropagation()">📍</a><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button><span class="ev-chevron">▼</span></div>
         <div class="ev-time">09:30</div>
         <div class="ev-name">Check-in Dammuso</div>
         <div class="ev-desc">Contrada Khamma 109 · Villa 3 camere vista mare · ~15min aeroporto</div>
         <div class="ev-expand">
-          <div class="ev-detail">📞 +39 0923 915585<br>🏠 3 camere · 7 ospiti · A/C, cucina, BBQ, patio<br>💰 €1.975,05 (Booking.com)<br>💡 Dammuso: muri pietra lavica con cupola</div>
+          <div class="ev-detail">📞 <a href="tel:+390923915585">+39 0923 915585</a><br>🏠 3 camere · 7 ospiti · A/C, cucina, BBQ, patio<br>💰 €1.975,05 (Booking.com)<br>💡 Dammuso: muri pietra lavica con cupola</div>
           
         </div>
       </div>
     </div>
 
     <div class="ev beach" data-lat="36.7990" data-lng="12.0470" data-ico="🌊">
-      <div class="ev-card"><div class="ev-tools"><a class="ev-map-icon" href="https://www.google.com/maps/dir/?api=1&destination=36.7985,12.0490" target="_blank" title="Apri in Google Maps" onclick="event.stopPropagation()">📍</a><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button><span class="ev-chevron">▼</span></div>
+      <div class="ev-card"><div class="ev-tools"><button class="ev-map-icon" onclick="event.stopPropagation();aFocus('cala-levante')" aria-label="Mostra Cala Levante sulla mappa qui sopra" title="Mostra sulla mappa qui sopra">🧭</button><a class="ev-map-icon" href="https://www.google.com/maps/dir/?api=1&destination=36.7985,12.0490" target="_blank" title="Apri in Google Maps" onclick="event.stopPropagation()">📍</a><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button><span class="ev-chevron">▼</span></div>
         <div class="ev-time">10:30 – 12:30</div>
         <div class="ev-name">Cala Levante + Arco dell'Elefante</div>
         <div class="ev-desc">Primo tuffo! Snorkeling eccellente, vista sull'Arco iconico di Pantelleria</div>
@@ -609,7 +612,7 @@ body.fulltext .cat-filters{display:none}
     </div>
 
     <div class="ev food" data-lat="36.7985" data-lng="12.0490" data-ico="🍽️">
-      <div class="ev-card"><div class="ev-tools"><a class="ev-map-icon" href="https://www.google.com/maps/search/Le+Cale+Pantelleria" target="_blank" title="Apri in Google Maps" onclick="event.stopPropagation()">📍</a><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button><span class="ev-chevron">▼</span></div>
+      <div class="ev-card"><div class="ev-tools"><a class="ev-map-icon call" href="tel:+390923915451" onclick="event.stopPropagation()" aria-label="Chiama Le Cale" title="Chiama Le Cale">📞</a><button class="ev-map-icon" onclick="event.stopPropagation();aFocus('le-cale')" aria-label="Mostra Le Cale sulla mappa qui sopra" title="Mostra sulla mappa qui sopra">🧭</button><a class="ev-map-icon" href="https://www.google.com/maps/search/Le+Cale+Pantelleria" target="_blank" title="Apri in Google Maps" onclick="event.stopPropagation()">📍</a><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button><span class="ev-chevron">▼</span></div>
         <div class="ev-time">13:00 – 14:30</div>
         <div class="ev-name">Pranzo — Le Cale</div>
         <div class="ev-desc">Terrazza vista Cala Levante · Pesce fresco, capperi e bottarga</div>
@@ -631,7 +634,7 @@ body.fulltext .cat-filters{display:none}
     </div>
 
     <div class="ev beach" data-lat="36.8121" data-lng="12.0251" data-ico="♨️">
-      <div class="ev-card"><div class="ev-tools"><a class="ev-map-icon" href="https://www.google.com/maps/dir/?api=1&destination=36.8121,12.0251" target="_blank" title="Apri in Google Maps" onclick="event.stopPropagation()">📍</a><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button><span class="ev-chevron">▼</span></div>
+      <div class="ev-card"><div class="ev-tools"><button class="ev-map-icon" onclick="event.stopPropagation();aFocus('cala-gadir-terme')" aria-label="Mostra Cala Gadir — Terme sulla mappa qui sopra" title="Mostra sulla mappa qui sopra">🧭</button><a class="ev-map-icon" href="https://www.google.com/maps/dir/?api=1&destination=36.8121,12.0251" target="_blank" title="Apri in Google Maps" onclick="event.stopPropagation()">📍</a><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button><span class="ev-chevron">▼</span></div>
         <div class="ev-time">15:00 – 17:00</div>
         <div class="ev-name">Cala Gadir — Terme naturali</div>
         <div class="ev-desc">Vasche 35-40°C in roccia vulcanica · Gratuite 24/7 · Perfetto nel pomeriggio</div>
@@ -643,12 +646,12 @@ body.fulltext .cat-filters{display:none}
     </div>
 
     <div class="ev wine" data-lat="36.7980" data-lng="12.0350" data-ico="🍇">
-      <div class="ev-card booked"><div class="ev-tools"><a class="ev-map-icon" href="https://www.google.com/maps/search/Donnafugata+Pantelleria" target="_blank" title="Apri in Google Maps" onclick="event.stopPropagation()">📍</a><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button><span class="ev-chevron">▼</span></div>
+      <div class="ev-card booked"><div class="ev-tools"><a class="ev-map-icon call" href="tel:+390923915649" onclick="event.stopPropagation()" aria-label="Chiama Donnafugata" title="Chiama Donnafugata">📞</a><button class="ev-map-icon" onclick="event.stopPropagation();aFocus('donnafugata')" aria-label="Mostra Donnafugata sulla mappa qui sopra" title="Mostra sulla mappa qui sopra">🧭</button><a class="ev-map-icon" href="https://www.google.com/maps/search/Donnafugata+Pantelleria" target="_blank" title="Apri in Google Maps" onclick="event.stopPropagation()">📍</a><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button><span class="ev-chevron">▼</span></div>
         <div class="ev-time">18:30 – 20:00</div>
         <div class="ev-name">Donnafugata <span class="badge">PRENOTATO</span></div>
         <div class="ev-desc">Vigneto Zibibbo UNESCO · Tour + 3 vini + Passito Ben Ryè · €280 pagato</div>
         <div class="ev-expand">
-          <div class="ev-detail">🗺️ Contrada Khamma Fuori 6<br>📞 +39 0923 915 649<br>🎫 Ref: 01-P-20260813-D-BK-013<br>👤 Antonio Alagna · 3339182554<br>👥 7 adulti<br>⏰ Arriva 10 min prima · ~1.5h<br>⚠️ Cancellazione: iscritto entro 2gg feriali</div>
+          <div class="ev-detail">🗺️ Contrada Khamma Fuori 6<br>📞 <a href="tel:+390923915649">+39 0923 915 649</a><br>🎫 Ref: 01-P-20260813-D-BK-013<br>👤 Antonio Alagna · 3339182554<br>👥 7 adulti<br>⏰ Arriva 10 min prima · ~1.5h<br>⚠️ Cancellazione: iscritto entro 2gg feriali</div>
           
         </div>
       </div>
@@ -657,8 +660,8 @@ body.fulltext .cat-filters{display:none}
     <div class="alt">
       <div class="alt-label">⚡ CENA — tutte a est, dopo Donnafugata</div>
       <div class="alt-grid three">
-        <div class="alt-opt"><h4><span class="alt-dot">A</span> Acquamore<a class="alt-map-icon" href="https://www.google.com/maps/dir/?api=1&destination=36.7995,12.0520" target="_blank" title="Apri Acquamore in Google Maps" onclick="event.stopPropagation()">📍</a></h4><p>Fine dining sul mare · Crudi, pasta ai ricci. Qui trovate anche il <strong>bacio pantesco</strong></p><div class="note">🗺️ Cala Tramontana · €€€ · ~5 min da Donnafugata</div></div>
-        <div class="alt-opt"><h4><span class="alt-dot">B</span> Il Principe e il Pirata<a class="alt-map-icon" href="https://www.google.com/maps/dir/?api=1&destination=36.7650,12.0380" target="_blank" title="Apri Il Principe e il Pirata in Google Maps" onclick="event.stopPropagation()">📍</a></h4><p>#1 dell'isola · Michelin Guide · Couscous</p><div class="note">🗺️ Punta Karace · €€€ · Prenota 5gg prima!</div></div>
+        <div class="alt-opt"><h4><span class="alt-dot">A</span> Acquamore<a class="alt-map-icon" href="https://www.google.com/maps/dir/?api=1&destination=36.7995,12.0520" target="_blank" title="Apri Acquamore in Google Maps" onclick="event.stopPropagation()">📍</a><a class="alt-map-icon call" href="tel:+393755768541" aria-label="Chiama Acquamore" title="Chiama Acquamore">📞</a></h4><p>Fine dining sul mare · Crudi, pasta ai ricci. Qui trovate anche il <strong>bacio pantesco</strong></p><div class="note">🗺️ Cala Tramontana · €€€ · ~5 min da Donnafugata</div></div>
+        <div class="alt-opt"><h4><span class="alt-dot">B</span> Il Principe e il Pirata<a class="alt-map-icon" href="https://www.google.com/maps/dir/?api=1&destination=36.7650,12.0380" target="_blank" title="Apri Il Principe e il Pirata in Google Maps" onclick="event.stopPropagation()">📍</a><a class="alt-map-icon call" href="tel:+390923691108" aria-label="Chiama Il Principe e il Pirata" title="Chiama Il Principe e il Pirata">📞</a></h4><p>#1 dell'isola · Michelin Guide · Couscous</p><div class="note">🗺️ Punta Karace · €€€ · Prenota 5gg prima!</div></div>
         <div class="alt-opt"><h4><span class="alt-dot">C</span> Da Andrea (Gadir)<a class="alt-map-icon" href="https://www.google.com/maps/dir/?api=1&destination=36.8120,12.0248" target="_blank" title="Apri Da Andrea (Gadir) in Google Maps" onclick="event.stopPropagation()">📍</a></h4><p>Lounge sul mare · Tartare del giorno, cheesecake al passito. Più informale</p><div class="note">🗺️ Gadir · €€ · ~10 min · Se volete qualcosa di rilassato la prima sera</div></div>
       </div>
     </div>
@@ -676,7 +679,7 @@ body.fulltext .cat-filters{display:none}
     <div class="hotel-bar" onclick="this.classList.toggle('open')">
       <span>🏨</span><span class="h-name">Dammuso Arco dell'Elefante</span><span class="h-chevron">▼</span>
     </div>
-    <div class="hotel-detail"><div class="hotel-detail-inner">🗺️ Contrada Khamma, 109 · 📞 +39 0923 915585<br>🏠 3 camere · Vista mare · A/C, cucina, BBQ<br>💰 €1.975,05 · Dammuso in pietra lavica</div></div>
+    <div class="hotel-detail"><div class="hotel-detail-inner">🗺️ Contrada Khamma, 109 · 📞 <a href="tel:+390923915585">+39 0923 915585</a><br>🏠 3 camere · Vista mare · A/C, cucina, BBQ<br>💰 €1.975,05 · Dammuso in pietra lavica</div></div>
 
   </div>
 </div>
@@ -695,7 +698,7 @@ body.fulltext .cat-filters{display:none}
     <div class="tip"><strong>📐 Logistica:</strong> Costa NORD-OVEST. Rientro dammuso entro 16:00 → docce 7 persone (1.5h) → Sesiventi ore 19:00 (Mursia, ~20 min dal dammuso).</div>
 
     <div class="ev sight" data-lat="36.8158" data-lng="11.9868" data-ico="🌋">
-      <div class="ev-card"><div class="ev-tools"><a class="ev-map-icon" href="https://www.google.com/maps/dir/?api=1&destination=36.8290,11.9440" target="_blank" title="Apri in Google Maps" onclick="event.stopPropagation()">📍</a><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button><span class="ev-chevron">▼</span></div>
+      <div class="ev-card"><div class="ev-tools"><button class="ev-map-icon" onclick="event.stopPropagation();aFocus('specchio-di-venere')" aria-label="Mostra Specchio di Venere sulla mappa qui sopra" title="Mostra sulla mappa qui sopra">🧭</button><a class="ev-map-icon" href="https://www.google.com/maps/dir/?api=1&destination=36.8290,11.9440" target="_blank" title="Apri in Google Maps" onclick="event.stopPropagation()">📍</a><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button><span class="ev-chevron">▼</span></div>
         <div class="ev-time">07:30 – 10:00</div>
         <div class="ev-name">Specchio di Venere + Fanghi</div>
         <div class="ev-desc">Vai PRESTO! Lago vulcanico + fanghi sulla riva sud. Gratuito</div>
@@ -707,7 +710,7 @@ body.fulltext .cat-filters{display:none}
     </div>
 
     <div class="ev sight" data-lat="36.8080" data-lng="11.9317" data-ico="🏰">
-      <div class="ev-card"><div class="ev-tools"><a class="ev-map-icon" href="https://www.google.com/maps/dir/?api=1&destination=36.8080,11.9317" target="_blank" title="Apri in Google Maps" onclick="event.stopPropagation()">📍</a><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button><span class="ev-chevron">▼</span></div>
+      <div class="ev-card"><div class="ev-tools"><button class="ev-map-icon" onclick="event.stopPropagation();aFocus('sesi-di-mursia')" aria-label="Mostra Sesi di Mursia sulla mappa qui sopra" title="Mostra sulla mappa qui sopra">🧭</button><a class="ev-map-icon" href="https://www.google.com/maps/dir/?api=1&destination=36.8080,11.9317" target="_blank" title="Apri in Google Maps" onclick="event.stopPropagation()">📍</a><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button><span class="ev-chevron">▼</span></div>
         <div class="ev-time">10:15 – 11:00</div>
         <div class="ev-name">Sesi di Mursia</div>
         <div class="ev-desc">Tombe megalitiche Età del Bronzo · 50+ monumenti · Gratuito</div>
@@ -731,7 +734,7 @@ body.fulltext .cat-filters{display:none}
     <div class="alt">
       <div class="alt-label">⚡ PRANZO — zona nord/ovest</div>
       <div class="alt-grid three">
-        <div class="alt-opt"><h4><span class="alt-dot">A</span> Agriturismo Zinedi<a class="alt-map-icon" href="https://www.google.com/maps/dir/?api=1&destination=36.8050,11.9600" target="_blank" title="Apri Agriturismo Zinedi in Google Maps" onclick="event.stopPropagation()">📍</a></h4><p>Vista Specchio di Venere · Giardino, piscina</p><div class="note">🗺️ Nord · €€ · Prenota</div></div>
+        <div class="alt-opt"><h4><span class="alt-dot">A</span> Agriturismo Zinedi<a class="alt-map-icon" href="https://www.google.com/maps/dir/?api=1&destination=36.8050,11.9600" target="_blank" title="Apri Agriturismo Zinedi in Google Maps" onclick="event.stopPropagation()">📍</a><a class="alt-map-icon call" href="tel:+390923914023" aria-label="Chiama Agriturismo Zinedi" title="Chiama Agriturismo Zinedi">📞</a></h4><p>Vista Specchio di Venere · Giardino, piscina</p><div class="note">🗺️ Nord · €€ · Prenota</div></div>
         <div class="alt-opt"><h4><span class="alt-dot">B</span> Cicci's Beach<a class="alt-map-icon" href="https://www.google.com/maps/dir/?api=1&destination=36.7545,11.9490" target="_blank" title="Apri Cicci's Beach in Google Maps" onclick="event.stopPropagation()">📍</a></h4><p>Beach bar · Pranzo leggero → tuffo</p><div class="note">🗺️ Costa ovest · €€</div></div>
         <div class="alt-opt"><h4><span class="alt-dot">C</span> Lido Shurhuq<a class="alt-map-icon" href="https://www.google.com/maps/dir/?api=1&destination=36.7959,11.9353" target="_blank" title="Apri Lido Shurhuq in Google Maps" onclick="event.stopPropagation()">📍</a></h4><p>L'unico lido attrezzato dell'isola: lettini, docce, canoe, pranzo e aperitivo. Comodo con 7 persone</p><div class="note">🗺️ Costa ovest · €€ · Se volete un pomeriggio senza pensieri</div></div>
       </div>
@@ -765,12 +768,12 @@ body.fulltext .cat-filters{display:none}
     </div>
 
     <div class="ev aperitivo yacht-box" data-lat="36.8122" data-lng="11.9305" data-ico="🥂">
-      <div class="ev-card booked"><div class="ev-tools"><a class="ev-map-icon" href="https://www.google.com/maps/dir/?api=1&destination=36.8122,11.9305" target="_blank" title="Apri in Google Maps" onclick="event.stopPropagation()">📍</a><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button><span class="ev-chevron">▼</span></div>
+      <div class="ev-card booked"><div class="ev-tools"><a class="ev-map-icon call" href="tel:+393505282450" onclick="event.stopPropagation()" aria-label="Chiama Sesiventi" title="Chiama Sesiventi">📞</a><button class="ev-map-icon" onclick="event.stopPropagation();aFocus('sesiventi')" aria-label="Mostra Sesiventi sulla mappa qui sopra" title="Mostra sulla mappa qui sopra">🧭</button><a class="ev-map-icon" href="https://www.google.com/maps/dir/?api=1&destination=36.8122,11.9305" target="_blank" title="Apri in Google Maps" onclick="event.stopPropagation()">📍</a><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button><span class="ev-chevron">▼</span></div>
         <div class="ev-time">19:00 – tardi</div>
         <div class="ev-name">Sesiventi — Rooftop + DJ + DISCO <span class="badge">PRENOTATO</span></div>
         <div class="ev-desc">€40/pers · Drink + piatto (porzioni ENORMI = è la vostra cena!)</div>
         <div class="ev-expand">
-          <div class="ev-detail">🗺️ Via del Muro Alto 16, Mursia<br>📞 +39 350 528 2450<br>🍾 Spumante + cocktail premium<br>🍽️ Polpette, tartare, fritto, tapas<br>👟 Scarpe giù sul rooftop · 👔 Dress code elegante<br>🎵 DJ tramonto → DISCO NIGHT<br>🌙 Si resta qui tutta sera!<br>💡 Le porzioni sono ENORMI: qui è la vostra cena</div>
+          <div class="ev-detail">🗺️ Via del Muro Alto 16, Mursia<br>📞 <a href="tel:+393505282450">+39 350 528 2450</a><br>🍾 Spumante + cocktail premium<br>🍽️ Polpette, tartare, fritto, tapas<br>👟 Scarpe giù sul rooftop · 👔 Dress code elegante<br>🎵 DJ tramonto → DISCO NIGHT<br>🌙 Si resta qui tutta sera!<br>💡 Le porzioni sono ENORMI: qui è la vostra cena</div>
           
         </div>
       </div>
@@ -825,7 +828,7 @@ body.fulltext .cat-filters{display:none}
         <div class="ev-name">Tour Isola in Yacht <span class="badge">PRENOTATO</span></div>
         <div class="ev-desc">Circumnavigazione completa · Cale, grotte, pranzo a bordo · 7 biglietti</div>
         <div class="ev-expand">
-          <div class="ev-detail">⛵ Tour con Simone & Luck<br>🎫 GYG7VKVW75Y3 · PIN: 3D7BBQp1<br>👥 7 biglietti · GetYourGuide<br>📞 +39 06 9674 1658 (24/7)<br>⚠️ Cancel gratuita entro 09:30 del 14/08<br><br>🌊 Cale nascoste · Grotte · Arco dal mare · Bolle Nikà · Balata dei Turchi<br>🍝 Pranzo a bordo incluso<br>💡 Porta: costume, crema, asciugamano, maschera</div>
+          <div class="ev-detail">⛵ Tour con Simone & Luck<br>🎫 GYG7VKVW75Y3 · PIN: 3D7BBQp1<br>👥 7 biglietti · GetYourGuide<br>📞 <a href="tel:+390696741658">+39 06 9674 1658</a> (24/7)<br>⚠️ Cancel gratuita entro 09:30 del 14/08<br><br>🌊 Cale nascoste · Grotte · Arco dal mare · Bolle Nikà · Balata dei Turchi<br>🍝 Pranzo a bordo incluso<br>💡 Porta: costume, crema, asciugamano, maschera</div>
           
         </div>
       </div>
@@ -840,7 +843,7 @@ body.fulltext .cat-filters{display:none}
     </div>
 
     <div class="ev food" data-lat="36.8130" data-lng="11.9840" data-ico="🍽️">
-      <div class="ev-card booked"><div class="ev-tools"><a class="ev-map-icon" href="https://www.google.com/maps/search/Trattoria+da+Pina+Pantelleria" target="_blank" title="Apri in Google Maps" onclick="event.stopPropagation()">📍</a><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button><span class="ev-chevron">▼</span></div>
+      <div class="ev-card booked"><div class="ev-tools"><a class="ev-map-icon call" href="tel:+393716467059" onclick="event.stopPropagation()" aria-label="Chiama Trattoria da Pina" title="Chiama Trattoria da Pina">📞</a><button class="ev-map-icon" onclick="event.stopPropagation();aFocus('trattoria-da-pina')" aria-label="Mostra Trattoria da Pina sulla mappa qui sopra" title="Mostra sulla mappa qui sopra">🧭</button><a class="ev-map-icon" href="https://www.google.com/maps/search/Trattoria+da+Pina+Pantelleria" target="_blank" title="Apri in Google Maps" onclick="event.stopPropagation()">📍</a><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button><span class="ev-chevron">▼</span></div>
         <div class="ev-time">21:30 – 23:00</div>
         <div class="ev-name">Trattoria da Pina <span class="badge">PRENOTATO</span></div>
         <div class="ev-desc">Ravioli panteschi (ricotta+menta) · Stufato · Travelers' Choice</div>
@@ -894,7 +897,7 @@ body.fulltext .cat-filters{display:none}
       <div class="alt-grid three">
         <div class="alt-opt"><h4><span class="alt-dot">A</span> Laghetto delle Ondine<a class="alt-map-icon" href="https://www.google.com/maps/dir/?api=1&destination=36.8244,12.0048" target="_blank" title="Apri Laghetto delle Ondine in Google Maps" onclick="event.stopPropagation()">📍</a></h4><p>Piscina naturale in roccia, paesaggio lunare · sentiero 20 min da Punta Spadillo</p><div class="note">⚠️ <strong>Solo col vento / mare mosso</strong>: sono le onde a ricambiare l'acqua, con mare piatto resta stagnante. Discesa difficile, scarpette · Il mare davanti ha <strong>correnti forti</strong></div></div>
         <div class="alt-opt"><h4><span class="alt-dot">B</span> Bue Marino<a class="alt-map-icon" href="https://www.google.com/maps/dir/?api=1&destination=36.8391,11.9544" target="_blank" title="Apri Bue Marino in Google Maps" onclick="event.stopPropagation()">📍</a></h4><p>Se il mare è piatto scegliete questa: scalinata diretta all'acqua, fondale graduale, chiosco vicino. La cala più amata dai panteschi</p><div class="note">🗺️ Nord, a 5 min dal centro · <strong>Al meglio col vento da SUD</strong> · Accesso semplice = ultimo tuffo senza stress</div></div>
-        <div class="alt-opt"><h4><span class="alt-dot">C</span> Punta Spadillo + Museo<a class="alt-map-icon" href="https://www.google.com/maps/dir/?api=1&destination=36.8241,12.0122" target="_blank" title="Apri Punta Spadillo + Museo in Google Maps" onclick="event.stopPropagation()">📍</a></h4><p>Faro, sentieri del Parco e rovine WWII. Accanto c'è il <strong>Museo Vulcanologico</strong> del Parco</p><div class="note">🗺️ Nord-est · Facile · Se il mare non collabora, questa è a prova di vento (museo: orari variabili, telefonate)</div></div>
+        <div class="alt-opt"><h4><span class="alt-dot">C</span> Punta Spadillo + Museo<a class="alt-map-icon" href="https://www.google.com/maps/dir/?api=1&destination=36.8241,12.0122" target="_blank" title="Apri Punta Spadillo + Museo in Google Maps" onclick="event.stopPropagation()">📍</a><a class="alt-map-icon call" href="tel:+390923569412" aria-label="Chiama Museo Punta Spadillo" title="Chiama Museo Punta Spadillo">📞</a></h4><p>Faro, sentieri del Parco e rovine WWII. Accanto c'è il <strong>Museo Vulcanologico</strong> del Parco</p><div class="note">🗺️ Nord-est · Facile · Se il mare non collabora, questa è a prova di vento (museo: orari variabili, telefonate)</div></div>
       </div>
     </div>
 
@@ -909,7 +912,7 @@ body.fulltext .cat-filters{display:none}
     </div>
 
     <div class="ev food" data-lat="36.8295" data-lng="11.9425" data-ico="🍨">
-      <div class="ev-card"><div class="ev-tools"><a class="ev-map-icon" href="https://www.google.com/maps/search/Pasticceria+Katia+Pantelleria" target="_blank" title="Apri in Google Maps" onclick="event.stopPropagation()">📍</a><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button><span class="ev-chevron">▼</span></div>
+      <div class="ev-card"><div class="ev-tools"><button class="ev-map-icon" onclick="event.stopPropagation();aFocus('pasticceria-katia')" aria-label="Mostra Pasticceria Katia sulla mappa qui sopra" title="Mostra sulla mappa qui sopra">🧭</button><a class="ev-map-icon" href="https://www.google.com/maps/search/Pasticceria+Katia+Pantelleria" target="_blank" title="Apri in Google Maps" onclick="event.stopPropagation()">📍</a><button class="ev-check" onclick="markDone(event)" title="Segna come fatto">✓</button><span class="ev-chevron">▼</span></div>
         <div class="ev-time">10:30 – 11:30</div>
         <div class="ev-name">Pasticceria Katia + Panificio Marrone</div>
         <div class="ev-desc">Granite, baci panteschi, gelato (#1 isola) · Focaccia e cannoli da portare</div>
@@ -923,7 +926,7 @@ body.fulltext .cat-filters{display:none}
     <div class="alt">
       <div class="alt-label">⚡ PRANZO — ultimo pasto, tutto in centro</div>
       <div class="alt-grid three">
-        <div class="alt-opt"><h4><span class="alt-dot">A</span> Dammuso Ristorante<a class="alt-map-icon" href="https://www.google.com/maps/dir/?api=1&destination=36.8285,11.9430" target="_blank" title="Apri Dammuso Ristorante in Google Maps" onclick="event.stopPropagation()">📍</a></h4><p>Cucina rustica pietra lavica · Caponata, pesce</p><div class="note">🗺️ Borgo Italia · €€</div></div>
+        <div class="alt-opt"><h4><span class="alt-dot">A</span> Dammuso Ristorante<a class="alt-map-icon" href="https://www.google.com/maps/dir/?api=1&destination=36.8285,11.9430" target="_blank" title="Apri Dammuso Ristorante in Google Maps" onclick="event.stopPropagation()">📍</a><a class="alt-map-icon call" href="tel:+390923911234" aria-label="Chiama Dammuso Ristorante" title="Chiama Dammuso Ristorante">📞</a></h4><p>Cucina rustica pietra lavica · Caponata, pesce</p><div class="note">🗺️ Borgo Italia · €€</div></div>
         <div class="alt-opt"><h4><span class="alt-dot">B</span> Franco Castiglione<a class="alt-map-icon" href="https://www.google.com/maps/dir/?api=1&destination=36.8280,11.9428" target="_blank" title="Apri Franco Castiglione in Google Maps" onclick="event.stopPropagation()">📍</a></h4><p>Pizza + pesce · Travelers' Choice</p><div class="note">🗺️ Borgo Italia · €€</div></div>
         <div class="alt-opt"><h4><span class="alt-dot">C</span> Il Cappero (via Roma)<a class="alt-map-icon" href="https://www.google.com/maps/dir/?api=1&destination=36.8312,11.9462" target="_blank" title="Apri Il Cappero (via Roma) in Google Maps" onclick="event.stopPropagation()">📍</a></h4><p>Se volete chiudere col piatto simbolo: <strong>raviolo pantesco</strong>, coda di rospo e tortino al passito</p><div class="note">🗺️ Via Roma · €€-€€€ · Prenotate: il 16 agosto è ancora alta stagione</div></div>
       </div>
@@ -935,7 +938,7 @@ body.fulltext .cat-filters{display:none}
         <a class="pit-nav" href="https://www.google.com/maps/dir/?api=1&destination=36.8160,11.9870" target="_blank" rel="noopener" aria-label="Apri Non avete ancora mangiato il cous cous pantesco? in Google Maps" title="Apri Non avete ancora mangiato il cous cous pantesco? in Google Maps">📍</a>
         <h4>Non avete ancora mangiato il cous cous pantesco?</h4>
         <p>È il piatto più identitario dell'isola — di pesce, con le verdure fritte. Se in 4 giorni non è capitato, <strong>Trattoria Runcune</strong> lo fa nella versione tradizionale, e anche <strong>Le Cale</strong> ha serate a tema.</p>
-        <div class="note">🗺️ Runcune: Via Roncone Pigna 22 · 📞 +39 0923 418161 · Telefonate prima, è una trattoria piccola</div>
+        <div class="note">🗺️ Runcune: Via Roncone Pigna 22 · 📞 <a href="tel:+390923418161">+39 0923 418161</a> · Telefonate prima, è una trattoria piccola</div>
       </div>
     </div>
 
@@ -1316,7 +1319,7 @@ function renderMap(){
       if(pd.length)h+='<br><span style="font-size:11px;color:#2563eb;font-weight:600">📅 G'+pd.join(', G')+'</span>';
       else h+='<br><span style="font-size:11px;color:#999">Non in programma</span>';
       h+='<div class="mp-b">';
-      if(p.ph)h+='<a class="ico call" href="tel:'+p.ph.replace(/\s/g,'')+'" title="Chiama">📱</a>';
+      if(p.ph)h+='<a class="ico call" href="tel:'+p.ph.replace(/\s/g,'')+'" title="Chiama">📞</a>';
       h+='<a class="ico" href="https://www.google.com/maps/dir/?api=1&destination='+p.lat+','+p.lng+'" target="_blank" rel="noopener" title="Apri in Google Maps">📍</a>';
       if(p.web)h+='<a class="ico" href="'+p.web+'" target="_blank" rel="noopener" title="Sito">🌐</a>';
       h+='</div></div>';
@@ -1585,12 +1588,12 @@ function aPlaceRows(list,showDist){
 
 // Le azioni sono SOLO icone, in alto a destra nello spazio libero accanto al nome.
 // Tre icone fisse, sempre lo stesso significato in tutta l'app:
-//   📱 chiama · 🧭 mostra sulla mappa qui sopra · 🗺️ apri in Google Maps
+//   📞 chiama · 🧭 mostra sulla mappa qui sopra · 🗺️ apri in Google Maps
 // 🧭 e 📍 sono azioni diverse (dentro l'app / fuori), quindi glifi diversi.
 function aAct(p){
   var n=aEsc(p.n),h='<div class="pc-a">';
   if(p.ph)h+='<a class="ico call" href="tel:'+aEsc(p.ph.replace(/\s/g,''))+'"'
-    +' aria-label="Chiama '+n+'" title="Chiama '+n+'">📱</a>';
+    +' aria-label="Chiama '+n+'" title="Chiama '+n+'">📞</a>';
   h+='<button class="ico" onclick="aFocus(\''+aEsc(p.id||'')+'\')"'
     +' aria-label="Mostra '+n+' sulla mappa qui sopra" title="Mostra sulla mappa qui sopra">🧭</button>';
   h+='<a class="ico" href="https://www.google.com/maps/dir/?api=1&destination='+p.lat+','+p.lng+'"'
@@ -1749,7 +1752,7 @@ function aAnswer(raw){
       ph.sort(function(a,b){return a._d-b._d;});
     }
     return '<div class="hd">📞 Numeri utili ('+ph.length+')</div>'
-      +'<div class="muted">📱 chiama · 🧭 mostra sulla mappa qui sopra · 🗺️ apre Google Maps</div>'
+      +'<div class="muted">📞 chiama · 🧭 mostra sulla mappa qui sopra · 🗺️ apre Google Maps</div>'
       +aPlaceRows(ph,gpsActive);
   }
 
@@ -1964,7 +1967,7 @@ initMap();
 updateCountdown();
 
 // PWA: registra il service worker per l'uso offline.
-// Salta su file://, dove non è permesso e genererebbe un errore in console.
+// Salta su file://, dove non e' permesso e genererebbe un errore in console.
 if('serviceWorker' in navigator && location.protocol.indexOf('http')===0){
   window.addEventListener('load',function(){
     navigator.serviceWorker.register('sw.js').catch(function(){});
