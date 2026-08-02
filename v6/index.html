@@ -151,7 +151,6 @@ body.fulltext .cat-filters{display:none}
 /* Maps as an icon in the corner cluster — adds no height to the card */
 .ev-map-icon{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--border);background:var(--card);font-size:13px;display:flex;align-items:center;justify-content:center;text-decoration:none;flex-shrink:0}
 .ev-map-icon:active{transform:scale(0.85);background:var(--accent)}
-.ev-map-icon.call{background:var(--green);border-color:var(--green)}
 .ev-tools{flex-wrap:wrap;justify-content:flex-end;max-width:150px}
 
 /* Tools cluster: check + chevron, top-right of every card */
@@ -208,7 +207,7 @@ body.fulltext .cat-filters{display:none}
 .alt-opt h4 .alt-dot{flex-shrink:0}
 .alt-map-icon{margin-left:auto;width:26px;height:26px;border-radius:50%;border:1.5px solid var(--border);background:var(--bg);font-size:13px;display:flex;align-items:center;justify-content:center;text-decoration:none;flex-shrink:0}
 .alt-map-icon:active{transform:scale(0.85);background:var(--accent)}
-.alt-map-icon.call{background:var(--green);border-color:var(--green);margin-left:5px}
+.alt-map-icon.call{margin-left:5px}
 
 /* A third alternative makes the 2-column grid uneven — let it wrap instead */
 .alt-grid.three{grid-template-columns:1fr 1fr 1fr}
@@ -362,7 +361,8 @@ body.fulltext .cat-filters{display:none}
   justify-content:center;text-decoration:none;cursor:pointer;flex:none;padding:0;
   font-family:var(--font);-webkit-tap-highlight-color:transparent;transition:transform .08s}
 .ico:active{transform:scale(0.86)}
-.ico.call{background:var(--green);border-color:var(--green)}
+/* La cornetta non ha sfondo colorato: in questa app il verde vuol dire
+   "fatto / aperto / confermato" (uno stato), non un'azione da fare. */
 /* ═══ TIMELINE: l'icona dell'attività al posto del pallino ═══
    Il colore resta (bordo + sfondo tenue) perché distingue i tipi a distanza,
    ma ora si legge subito COSA è, non solo che c'è qualcosa. */
